@@ -1,9 +1,9 @@
-Cinema
+Cinema Paint
 ====
-CinemaPaint is a collection of custom abstract paint post-processing effects for Unity's HDRP
 
+**Cinema Paint** is a collection of custom abstract paint post-processing effects for Unity's [HDRP](https://docs.unity3d.com/Packages/com.unity.render-pipelines.high-definition@11.0/manual/index.html).
 
-**CinemaPaint** is a collection of custom abstract paint post-processing effects for Unity's [HDRP](https://docs.unity3d.com/Packages/com.unity.render-pipelines.high-definition@11.0/manual/index.html).
+Work in progress...
 
 
 [HDRP]:
