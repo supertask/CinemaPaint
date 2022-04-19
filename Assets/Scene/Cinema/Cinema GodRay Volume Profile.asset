@@ -1,0 +1,489 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-7385407757357757825
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d7593b3a9277ac4696b20006c21dde2, type: 3}
+  m_Name: VisualEnvironment
+  m_EditorClassIdentifier: 
+  active: 1
+  m_AdvancedMode: 0
+  skyType:
+    m_OverrideState: 1
+    m_Value: 0
+  skyAmbientMode:
+    m_OverrideState: 0
+    m_Value: 0
+  fogType:
+    m_OverrideState: 0
+    m_Value: 0
+--- !u!114 &-7013381995553300511
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ce123f94da688c4392cd9e2b97d2c2c, type: 3}
+  m_Name: RandomInvert
+  m_EditorClassIdentifier: 
+  active: 1
+  m_AdvancedMode: 0
+  fadeTime:
+    m_OverrideState: 0
+    m_Value: 0.5
+    min: 0
+    max: 3
+  noiseScale:
+    m_OverrideState: 0
+    m_Value: 250
+    min: 0
+    max: 500
+  startInvert:
+    m_OverrideState: 1
+    m_Value: 0
+  easeType: 14
+  isInvert: 0
+--- !u!114 &-4696273550558823756
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd57aa1be1be0184ab0c0dff84d222af, type: 3}
+  m_Name: RadiationBlur
+  m_EditorClassIdentifier: 
+  active: 1
+  m_AdvancedMode: 0
+  center:
+    m_OverrideState: 0
+    m_Value: {x: 0.5, y: 0.5}
+  power:
+    m_OverrideState: 1
+    m_Value: 1
+    min: 0
+    max: 100
+--- !u!114 &-4492753102241306224
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3cb7a14b68a9bfb47aa3f225dd6fbcea, type: 3}
+  m_Name: Negative
+  m_EditorClassIdentifier: 
+  active: 1
+  m_AdvancedMode: 0
+  negativeRatio:
+    m_OverrideState: 1
+    m_Value: 0
+    min: 0
+    max: 1
+--- !u!114 &-2062083146128236098
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd9b633332767e5409fda8c9ece40216, type: 3}
+  m_Name: RectBlockGlitch
+  m_EditorClassIdentifier: 
+  active: 1
+  m_AdvancedMode: 0
+  noiseSpeed:
+    m_OverrideState: 0
+    m_Value: 0.9
+    min: 0
+    max: 1
+  noiseColorChange:
+    m_OverrideState: 0
+    m_Value: 0.85
+    min: 0
+    max: 1
+  intensity:
+    m_OverrideState: 1
+    m_Value: 0
+    min: 0
+    max: 1
+  glitchScale:
+    m_OverrideState: 0
+    m_Value: 55
+    min: 0
+    max: 150
+--- !u!114 &-1252917266381205679
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80083209c120b354eb9932bb5d6fe48a, type: 3}
+  m_Name: RGBShift
+  m_EditorClassIdentifier: 
+  active: 1
+  m_AdvancedMode: 0
+  power:
+    m_OverrideState: 1
+    m_Value: 0
+    min: 0
+    max: 100
+--- !u!114 &-1031690443465666833
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 65460e6bd978bb541a1b62168de1a7df, type: 3}
+  m_Name: RadiationBlur
+  m_EditorClassIdentifier: 
+  active: 1
+  m_AdvancedMode: 0
+  center:
+    m_OverrideState: 0
+    m_Value: {x: 0.5, y: 0.5}
+  power:
+    m_OverrideState: 1
+    m_Value: 0
+    min: 0
+    max: 100
+--- !u!114 &-678666130934084488
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 304ce79e55c52274880d9e8792715dbd, type: 3}
+  m_Name: Reflection
+  m_EditorClassIdentifier: 
+  active: 1
+  m_AdvancedMode: 0
+  isHorizontal:
+    m_OverrideState: 1
+    m_Value: 0
+  isVertical:
+    m_OverrideState: 1
+    m_Value: 0
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7fd9488000d3734a9e00ee676215985, type: 3}
+  m_Name: Cinema GodRay Volume Profile
+  m_EditorClassIdentifier: 
+  components:
+  - {fileID: -7385407757357757825}
+  - {fileID: 2441398752741114156}
+  - {fileID: 1195378363643787415}
+--- !u!114 &1195378363643787415
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db8a0f38b1204b046b9e956a8be6235e, type: 3}
+  m_Name: RadiationBlur
+  m_EditorClassIdentifier: 
+  active: 0
+  m_AdvancedMode: 0
+  center:
+    m_OverrideState: 0
+    m_Value: {x: 0.5, y: 0.5}
+  power:
+    m_OverrideState: 1
+    m_Value: 25.6
+    min: 0
+    max: 100
+--- !u!114 &1533978315674842829
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d100b8516d08694aacf71da9fb4aff1, type: 3}
+  m_Name: Distortion
+  m_EditorClassIdentifier: 
+  active: 1
+  m_AdvancedMode: 0
+  scale:
+    m_OverrideState: 0
+    m_Value: 0.5
+    min: 0
+    max: 1
+  position:
+    m_OverrideState: 0
+    m_Value: {x: 0, y: 0, z: 1}
+  power:
+    m_OverrideState: 1
+    m_Value: 0
+    min: 0
+    max: 1
+  timeScale:
+    m_OverrideState: 0
+    m_Value: 5
+    min: 0
+    max: 10
+--- !u!114 &2267417580730592256
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a7fcec31d6684e4eb2e63eb5c76e1e1, type: 3}
+  m_Name: Negative
+  m_EditorClassIdentifier: 
+  active: 1
+  m_AdvancedMode: 0
+  negativeRatio:
+    m_OverrideState: 1
+    m_Value: 0
+    min: 0
+    max: 1
+--- !u!114 &2329630629719974946
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab7c01bd358ea604cb2ab21c852ef387, type: 3}
+  m_Name: RectBlockGlitch
+  m_EditorClassIdentifier: 
+  active: 1
+  m_AdvancedMode: 0
+  noiseSpeed:
+    m_OverrideState: 0
+    m_Value: 0.9
+    min: 0
+    max: 1
+  noiseColorChange:
+    m_OverrideState: 0
+    m_Value: 0.85
+    min: 0
+    max: 1
+  intensity:
+    m_OverrideState: 1
+    m_Value: 0
+    min: 0
+    max: 1
+  glitchScale:
+    m_OverrideState: 1
+    m_Value: 31
+    min: 0
+    max: 150
+--- !u!114 &2441398752741114156
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae7c981926513ae479a3aff37754a8e4, type: 3}
+  m_Name: GodRay
+  m_EditorClassIdentifier: 
+  active: 1
+  m_AdvancedMode: 0
+  power:
+    m_OverrideState: 0
+    m_Value: 1
+    min: 0
+    max: 1
+  iteration:
+    m_OverrideState: 1
+    m_Value: 100
+    min: 0
+    max: 150
+  rayDistance:
+    m_OverrideState: 1
+    m_Value: 0.294
+    min: 0
+    max: 1
+--- !u!114 &4405347659257182059
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ad5db7bb91d9da4bbc19a578f6a1fa2, type: 3}
+  m_Name: RandomInvert
+  m_EditorClassIdentifier: 
+  active: 1
+  m_AdvancedMode: 0
+  fadeTime:
+    m_OverrideState: 0
+    m_Value: 0.25
+    min: 0
+    max: 3
+  noiseScale:
+    m_OverrideState: 0
+    m_Value: 250
+    min: 0
+    max: 500
+  startInvert:
+    m_OverrideState: 1
+    m_Value: 0
+  easeType: 14
+  isInvert: 0
+--- !u!114 &5709825762171858633
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cedec2e20a3e4bf488f7afcdfa8079b9, type: 3}
+  m_Name: Mosaic
+  m_EditorClassIdentifier: 
+  active: 1
+  m_AdvancedMode: 0
+  scale:
+    m_OverrideState: 1
+    m_Value: 1
+    min: 0
+    max: 100
+  isCircle:
+    m_OverrideState: 0
+    m_Value: 0
+--- !u!114 &6291974711227730995
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9a66003cffa1114c9ceef6c6c0d7f66, type: 3}
+  m_Name: Distortion
+  m_EditorClassIdentifier: 
+  active: 1
+  m_AdvancedMode: 0
+  noiseDistortionScale:
+    m_OverrideState: 0
+    m_Value: 0.5
+    min: 0
+    max: 1
+  noiseDistortionPosition:
+    m_OverrideState: 0
+    m_Value: {x: 0, y: 0, z: 1}
+  noiseDistortionPower:
+    m_OverrideState: 1
+    m_Value: 0
+    min: 0
+    max: 1
+  noiseDistortionTimeScale:
+    m_OverrideState: 0
+    m_Value: 5
+    min: 0
+    max: 10
+  barrelDistortionPower:
+    m_OverrideState: 1
+    m_Value: {x: 0, y: 0}
+--- !u!114 &7868650011930419699
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2bf8452a56dfccd4898d46dd2f505c4c, type: 3}
+  m_Name: Mosaic
+  m_EditorClassIdentifier: 
+  active: 1
+  m_AdvancedMode: 0
+  scale:
+    m_OverrideState: 1
+    m_Value: 1
+    min: 0
+    max: 100
+  isCircle:
+    m_OverrideState: 0
+    m_Value: 0
+--- !u!114 &8709714235974665491
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 448dc5f5bab1fbf4b9f99a3ec6252860, type: 3}
+  m_Name: RGBShift
+  m_EditorClassIdentifier: 
+  active: 1
+  m_AdvancedMode: 0
+  power:
+    m_OverrideState: 1
+    m_Value: 0
+    min: 0
+    max: 100
+--- !u!114 &9058102385735049142
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a60d5ea8ca8d04549a0707dafd0d57fb, type: 3}
+  m_Name: Reflection
+  m_EditorClassIdentifier: 
+  active: 1
+  m_AdvancedMode: 0
+  isHorizontal:
+    m_OverrideState: 1
+    m_Value: 0
+  isVertical:
+    m_OverrideState: 1
+    m_Value: 0
