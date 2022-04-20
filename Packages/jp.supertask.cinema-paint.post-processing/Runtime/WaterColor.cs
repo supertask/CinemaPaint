@@ -18,7 +18,7 @@ namespace CinemaPaint.PostProcessing
     [System.Serializable, VolumeComponentMenu("Post-processing/CinemaPaint/WaterColor")]
     public sealed class WaterColor : CustomPostProcessVolumeComponent, IPostProcessComponent
     {        
-        //public Bool​Parameter isEnabled = new Bool​Parameter(false);
+        public Bool​Parameter isEnabled = new Bool​Parameter(false);
 
         public ClampedFloatParameter wobblingPower = new ClampedFloatParameter(0.005f, 0, 0.01f);
         public Vector2Parameter wobblingTiling = new Vector2Parameter(new Vector2(0.5f, 1.0f));
@@ -78,8 +78,9 @@ namespace CinemaPaint.PostProcessing
         }
 
         public bool IsActive() => _material != null && (
-                wobblingPower.value > 0 || edgeDarkningPower.value > 0 ||
-                washiPaperPower.value > 0 || turbulenceFlowPower.value > 0
+            isEnabled.value
+            //wobblingPower.value > 0 || edgeDarkningPower.value > 0 ||
+            //washiPaperPower.value > 0 || turbulenceFlowPower.value > 0
         );
 
         public override CustomPostProcessInjectionPoint injectionPoint =>
