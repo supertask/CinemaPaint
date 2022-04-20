@@ -18,13 +18,19 @@ namespace CinemaPaint.PostProcessing
     [System.Serializable, VolumeComponentMenu("Post-processing/CinemaPaint/WaterColor")]
     public sealed class WaterColor : CustomPostProcessVolumeComponent, IPostProcessComponent
     {        
-        public Bool​Parameter isEnabled = new Bool​Parameter(false);
+        //public Bool​Parameter isEnabled = new Bool​Parameter(false);
 
-        public Vector2Parameter wobblingTiling = new Vector2Parameter(new Vector2(1,1));
-        public Vector2Parameter paperTiling1 = new Vector2Parameter(new Vector2(1,1));
         public ClampedFloatParameter wobblingPower = new ClampedFloatParameter(0.005f, 0, 0.01f);
-        public ClampedFloatParameter edgeDarkningPower = new ClampedFloatParameter(1.0f, 0, 1.0f);
-        public ClampedFloatParameter paperPower = new ClampedFloatParameter(1.0f, 0.0f, 1.0f);
+        public Vector2Parameter wobblingTiling = new Vector2Parameter(new Vector2(0.5f, 1.0f));
+        
+        public ClampedFloatParameter edgeDarkningPower = new ClampedFloatParameter(3.0f, 0, 5.0f);
+        public ClampedFloatParameter edgeDarkningSize = new ClampedFloatParameter(1.0f, 0, 5.0f);
+
+        public ClampedFloatParameter turbulenceFlowPower = new ClampedFloatParameter(1.0f, 0.0f, 5.0f);
+        public Vector2Parameter turbulenceFlowTiling = new Vector2Parameter(new Vector2(1, 1));
+
+        public ClampedFloatParameter washiPaperPower = new ClampedFloatParameter(1.0f, 0.0f, 5.0f);
+        public Vector2Parameter washiPaperTiling = new Vector2Parameter(new Vector2(1.0f, 1.0f));
 
 
         //public Bool​Parameter isCircle = new Bool​Parameter(false);
@@ -37,10 +43,14 @@ namespace CinemaPaint.PostProcessing
 
         Material _material;
         Texture2D _wobblingTexture;
-        Texture2D _paperTexture;
+        
+        Texture2D _washiPaperTexture;
+        Texture2D _turbulenceFlowTexture;
+
 
         RTHandle wobblingRT;
         RTHandle edgeDarkningRT;
+        RTHandle turbulenceRT;
 
         MaterialPropertyBlock _prop;
         
@@ -62,11 +72,15 @@ namespace CinemaPaint.PostProcessing
             internal static readonly int EdgePower = Shader.PropertyToID("_EdgePower");
             internal static readonly int EdgeSize = Shader.PropertyToID("_EdgeSize");
             
+            internal static readonly int PaperPower = Shader.PropertyToID("_PaperPower");
             internal static readonly int PaperTiling = Shader.PropertyToID("_PaperTiling");
             internal static readonly int PaperTexture = Shader.PropertyToID("_PaperTexture");
         }
 
-        public bool IsActive() => _material != null && isEnabled.value; //TODO
+        public bool IsActive() => _material != null && (
+                wobblingPower.value > 0 || edgeDarkningPower.value > 0 ||
+                washiPaperPower.value > 0 || turbulenceFlowPower.value > 0
+        );
 
         public override CustomPostProcessInjectionPoint injectionPoint =>
         //    CustomPostProcessInjectionPoint.BeforePostProcess;
@@ -76,8 +90,12 @@ namespace CinemaPaint.PostProcessing
         {
             _material = CoreUtils.CreateEngineMaterial("Hidden/CinemaPaint/PostProcess/WaterColor");
             _wobblingTexture =  Resources.Load<Texture2D>("Texture/WaterColorFilter/Wobbling_Seamless");
-            _paperTexture =  Resources.Load<Texture2D>("Texture/WaterColorFilter/Shiroishi_washi_letter_paper_Seamless");
+            
+            _washiPaperTexture = Resources.Load<Texture2D>("Texture/WaterColorFilter/Shiroishi_washi_letter_paper_Seamless");
+            _turbulenceFlowTexture = Resources.Load<Texture2D>("Texture/WaterColorFilter/TurbulenceFLowLayer_Seamless");
+
             _prop = new MaterialPropertyBlock();
+
             
             //const GraphicsFormat RTFormat = GraphicsFormat.R16G16B16A16_SFloat;
             //this.wobbling = RTHandles.Alloc(camera.actualWidth, camera.actualHeight, colorFormat: RTFormat);
@@ -95,11 +113,15 @@ namespace CinemaPaint.PostProcessing
 
             const GraphicsFormat RTFormat = GraphicsFormat.R16G16B16A16_SFloat;
             
-            if (wobblingRT == null) {
+            if (!IsSameSize(camera))
+            {
+                this.ReleaseRT();
                 this.wobblingRT = RTHandles.Alloc(camera.actualWidth, camera.actualHeight, colorFormat: RTFormat);
-            }
-            if (edgeDarkningRT == null) {
                 this.edgeDarkningRT = RTHandles.Alloc(camera.actualWidth, camera.actualHeight, colorFormat: RTFormat);
+                this.turbulenceRT = RTHandles.Alloc(camera.actualWidth, camera.actualHeight, colorFormat: RTFormat);
+
+                _baseWidth = camera.actualHeight;
+                _baseHeight = camera.actualHeight;
             }
 
             // Blit Wobbling
@@ -107,7 +129,7 @@ namespace CinemaPaint.PostProcessing
             _material.SetVector(ShaderIDs.WobblingTiling, wobblingTiling.value);
             _material.SetTexture(ShaderIDs.WobblingTexture, _wobblingTexture);
             _material.SetTexture(ShaderIDs.SourceTexture, srcRT);
-            HDUtils.DrawFullScreen(cmd, _material, wobblingRT, _prop, PASS_WOBB);
+            HDUtils.DrawFullScreen(cmd, _material, wobblingRT, null, PASS_WOBB);
             //CoreUtils.SetRenderTarget(cmd, wobbling, ClearFlag.Color);
             //CoreUtils.DrawFullScreen(cmd, _material, shaderPassId: wobblingPass, properties: null);
 
@@ -116,20 +138,24 @@ namespace CinemaPaint.PostProcessing
 
             // Blit Edge Darkning
             _prop.SetTexture(ShaderIDs.InputTexture, wobblingRT); //ここでのinput textureはshader側でTEXTURE2D_X()で指定しないと読み込まれない
-            _material.SetFloat(ShaderIDs.EdgeSize, 1.0f);
-            _material.SetFloat(ShaderIDs.EdgePower, 3.0f);
-            //_material.SetTexture(ShaderIDs.InputTexture, wobblingRT);
-            //_material.SetFloat(ShaderIDs.EdgeSize, 1.0f);
-            //_material.SetFloat(ShaderIDs.EdgePower, 3.0f);
-            HDUtils.DrawFullScreen(cmd, _material, destRT, _prop, PASS_EDGE);
+            _prop.SetFloat(ShaderIDs.EdgeSize, edgeDarkningSize.value);
+            _prop.SetFloat(ShaderIDs.EdgePower, edgeDarkningPower.value);
+            HDUtils.DrawFullScreen(cmd, _material, edgeDarkningRT, _prop, PASS_EDGE);
+
             
-            /*
-            _material.SetTexture(ShaderIDs.InputTexture, edgeDarkningRT);
-            _material.SetTexture(ShaderIDs.PaperTexture, _paperTexture);
-            _material.SetVector(ShaderIDs.PaperTiling, paperTiling1.value);
-            
-            HDUtils.DrawFullScreen(cmd, _material, destRT, null, PASS_PAPER);  
-            */
+            //Turbulence Paper
+            _prop.SetTexture(ShaderIDs.InputTexture, edgeDarkningRT);
+            _prop.SetTexture(ShaderIDs.PaperTexture, _turbulenceFlowTexture);
+            _prop.SetVector(ShaderIDs.PaperTiling, turbulenceFlowTiling.value);
+            _prop.SetFloat(ShaderIDs.PaperPower, turbulenceFlowPower.value);
+            HDUtils.DrawFullScreen(cmd, _material, turbulenceRT, _prop, PASS_PAPER);
+                        
+            //Washi Paper    
+            _prop.SetTexture(ShaderIDs.InputTexture, turbulenceRT);
+            _prop.SetTexture(ShaderIDs.PaperTexture, _washiPaperTexture);
+            _prop.SetVector(ShaderIDs.PaperTiling, washiPaperTiling.value);
+            _prop.SetFloat(ShaderIDs.PaperPower, washiPaperPower.value);
+            HDUtils.DrawFullScreen(cmd, _material, destRT, _prop, PASS_PAPER);
         }
         
         /*
@@ -162,9 +188,14 @@ namespace CinemaPaint.PostProcessing
         public override void Cleanup()
         {
             CoreUtils.Destroy(_material);
+            this.ReleaseRT();
+        }
+
+        public void ReleaseRT()
+        {
             if (wobblingRT != null) RTHandles.Release(this.wobblingRT);
             if (edgeDarkningRT != null) RTHandles.Release(this.edgeDarkningRT);
-
+            if (turbulenceRT != null) RTHandles.Release(this.turbulenceRT);            
         }
     }
 }

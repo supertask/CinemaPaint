@@ -524,21 +524,30 @@ MonoBehaviour:
   m_Name: WaterColor
   m_EditorClassIdentifier: 
   active: 1
-  wobblingTiling:
-    m_OverrideState: 1
-    m_Value: {x: 0.1, y: 1}
-  paperTiling1:
-    m_OverrideState: 0
-    m_Value: {x: 1, y: 1}
   wobblingPower:
     m_OverrideState: 1
     m_Value: 0.005
+  wobblingTiling:
+    m_OverrideState: 1
+    m_Value: {x: 1, y: 1}
   edgeDarkningPower:
-    m_OverrideState: 0
-    m_Value: 0
-  paperPower:
-    m_OverrideState: 0
-    m_Value: 0
+    m_OverrideState: 1
+    m_Value: 3
+  edgeDarkningSize:
+    m_OverrideState: 1
+    m_Value: 1
+  turbulenceFlowPower:
+    m_OverrideState: 1
+    m_Value: 1
+  turbulenceFlowTiling:
+    m_OverrideState: 1
+    m_Value: {x: 1, y: 1}
+  washiPaperPower:
+    m_OverrideState: 1
+    m_Value: 3
+  washiPaperTiling:
+    m_OverrideState: 1
+    m_Value: {x: 1, y: 1}
 --- !u!114 &6291974711227730995
 MonoBehaviour:
   m_ObjectHideFlags: 3
