@@ -25,19 +25,6 @@ Shader "Hidden/CinemaPaint/PostProcess/WaterColor"
 				return c - (c - c * c) * (d - 1);
 			}
             
-            /*
-            // Triangle wave for ping pong uv
-            // Usecase: PingPong(mirror) texture
-            float fukuokaTriangleWave(float x) {
-                //return abs(fmod(x, 2.0) - 1) * 0.995 + 0.003; //original version
-                return abs(fmod(x + 1 + 100, 2.0) - 1);
-            }
-
-            float2 fukuokaTriangleWave2D(float2 uv) {
-                return float2(fukuokaTriangleWave(uv.x), fukuokaTriangleWave(uv.y));
-            }
-            */
-            
             //https://graphtoy.com/?f1(x,t)=abs(mod(x,1.0))&v1=true&f2(x,t)=&v2=false&f3(x,t)=&v3=false&f4(x,t)=&v4=false&f5(x,t)=&v5=false&f6(x,t)=&v6=false&grid=1&coords=10.971303370786517,0.033808988764044756,14.520000000000003
             float repeatTexture1D(float x) {
                 return abs(fmod(x,1.0));
@@ -88,17 +75,10 @@ Shader "Hidden/CinemaPaint/PostProcess/WaterColor"
             float4 Fragment(Varyings input) : SV_Target
             {
                 UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
-
-				//float aspect = _ScreenSize.x / _ScreenSize.y;
-                //input.wobblingUV = input.uv * float2(aspect, 1) * _WobblingTiling.xy;
                 
-                input.wobblingUV = repeatTexture2D(input.wobblingUV);
-                float4 wobblingColor = LOAD_TEXTURE2D(_WobblingTexture, input.wobblingUV * _ScreenSize.xy);
-                float2 wobbling = (wobblingColor.wy * 2 - 1) * _WobblingPower;
-                                
+                float4 wobblingColor = SAMPLE_TEXTURE2D(_WobblingTexture, s_linear_repeat_sampler, input.wobblingUV);
+                float2 wobbling = (wobblingColor.wy * 2 - 1) * _WobblingPower;                                
                 return LOAD_TEXTURE2D_X(_SourceTexture, (input.uv + wobbling) * _ScreenSize.xy);
-                
-                //return 1;
             }
             ENDHLSL
         }
@@ -125,9 +105,7 @@ Shader "Hidden/CinemaPaint/PostProcess/WaterColor"
 
             float4  _InputTexture_TexelSize;
             TEXTURE2D(_InputTexture);
-            
-            //TEXTURE2D(_PaperTexture1);
-            
+
             Varyings Vertex(Attributes input)
             {
                 Varyings output;
@@ -183,6 +161,7 @@ Shader "Hidden/CinemaPaint/PostProcess/WaterColor"
 			float2 _PaperTiling;
 			float _PaperPower;            
             TEXTURE2D(_PaperTexture);
+            //SAMPLER(sampler_PaperTexture);
 
             
             Varyings Vertex(Attributes input)
@@ -201,15 +180,13 @@ Shader "Hidden/CinemaPaint/PostProcess/WaterColor"
             {
                 UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
                 
-                _PaperPower = 1.0;
                 
-                //return 1;
-
 				float4 srcColor = LOAD_TEXTURE2D(_InputTexture, input.uv * _ScreenSize.xy );
                 //return srcColor;
                 
-                input.paperUV = repeatTexture2D(input.paperUV);
-                float4 paperColor = LOAD_TEXTURE2D(_PaperTexture, input.paperUV * _ScreenSize.xy);
+                //input.paperUV = repeatTexture2D(input.paperUV);
+                //float4 paperColor = LOAD_TEXTURE2D(_PaperTexture, input.paperUV * _ScreenSize.xy);
+                float4 paperColor = SAMPLE_TEXTURE2D(_PaperTexture, s_linear_repeat_sampler, input.paperUV);
 				float paper = _PaperPower * (paperColor - 0.5) + 1;
                 
 				return ColorMod(srcColor, paper);
