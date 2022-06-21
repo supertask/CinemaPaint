@@ -1,0 +1,29 @@
+# Ref. https://qiita.com/mattak/items/bc07c55300a66d813a2f
+name: "Publish release"
+on:
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '14.x'
+
+      - name: Install dependencies
+        working-directory: Assets/WavEffector
+        run: |
+          npm install -g -D semantic-release
+          npm install -g -D @semantic-release/git
+          npm install -g -D @semantic-release/github
+          npm install -g -D @semantic-release/release-notes-generator
+          npm install -g -D @semantic-release/commit-analyzer
+          npm install -g -D @semantic-release/npm
+
+      - name: Release
+        working-directory: Assets/WavEffector
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: semantic-release
