@@ -3,7 +3,6 @@
     "name": "Tasuku Takahashi"
   },
   "dependencies": {
-    "com.unity.render-pipelines.high-definition": "12.1.6"
   },
   "description": "Cinema Paint is a collection of abstract paint post-processing effects for Unity's HDRP.",
   "displayName": "Cinema Paint",
