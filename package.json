@@ -2,8 +2,7 @@
   "author": {
     "name": "Tasuku Takahashi"
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "description": "Cinema Paint is a collection of abstract paint post-processing effects for Unity's HDRP.",
   "displayName": "Cinema Paint",
   "keywords": [
@@ -15,5 +14,5 @@
   "repository": "github:supertask/CinemaPaint",
   "unity": "2021.3",
   "unityRelease": "0f1",
-  "version": "1.0.1"
+  "version": "1.0.2"
 }
