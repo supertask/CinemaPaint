@@ -18,14 +18,14 @@
             "@semantic-release/npm",
             {
                 "npmPublish": false,
-                "pkgRoot": "Packages/jp.goma_recorder.unity-samplepackage"
+                "pkgRoot": "Packages/jp.supertask.cinema-paint.post-processing"
             }
         ],
         [
             "@semantic-release/git",
             {
                 "assets": [
-                    "Packages/jp.goma_recorder.unity-samplepackage/package.json",
+                    "Packages/jp.supertask.cinema-paint.post-processing/package.json",
                     "CHANGELOG.md"
                 ],
                 "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
