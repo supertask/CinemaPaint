@@ -1,5 +1,5 @@
 {
-    "name": "CinemaPaint.Postprocessing",
+    "name": "CinemaPaint.HighDefinition",
     "rootNamespace": "",
     "references": [
         "Unity.RenderPipelines.Core.Runtime",

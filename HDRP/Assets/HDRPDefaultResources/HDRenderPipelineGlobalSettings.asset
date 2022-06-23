@@ -65,7 +65,7 @@ MonoBehaviour:
   beforePostProcessCustomPostProcesses: []
   afterPostProcessBlursCustomPostProcesses: []
   afterPostProcessCustomPostProcesses:
-  - CinemaPaint.PostProcessing.WaterColor, CinemaPaint.Postprocessing, Version=0.0.0.0,
+  - CinemaPaint.PostProcessing.WaterColor, CinemaPaint.HighDefinition, Version=0.0.0.0,
     Culture=neutral, PublicKeyToken=null
   beforeTAACustomPostProcesses: []
   lightLayerName0: Light Layer default

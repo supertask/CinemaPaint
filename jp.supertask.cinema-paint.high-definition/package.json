@@ -10,7 +10,7 @@
     "shader"
   ],
   "license": "MIT",
-  "name": "jp.supertask.cinema-paint.post-processing",
+  "name": "jp.supertask.cinema-paint.high-definition",
   "repository": "github:supertask/CinemaPaint",
   "unity": "2021.3",
   "unityRelease": "0f1",

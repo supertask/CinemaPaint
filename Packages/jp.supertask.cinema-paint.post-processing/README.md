@@ -1,1 +1,0 @@
-Cinema Paint

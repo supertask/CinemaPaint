@@ -10,7 +10,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.mathematics": {
-      "version": "1.2.5",
+      "version": "1.2.6",
       "depth": 1,
       "source": "registry",
       "dependencies": {},
@@ -26,7 +26,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.render-pipelines.core": {
-      "version": "12.1.6",
+      "version": "12.1.7",
       "depth": 1,
       "source": "builtin",
       "dependencies": {
@@ -36,7 +36,7 @@
       }
     },
     "com.unity.render-pipelines.high-definition": {
-      "version": "12.1.6",
+      "version": "12.1.7",
       "depth": 0,
       "source": "builtin",
       "dependencies": {
@@ -46,18 +46,18 @@
         "com.unity.modules.animation": "1.0.0",
         "com.unity.modules.imageconversion": "1.0.0",
         "com.unity.modules.terrain": "1.0.0",
-        "com.unity.render-pipelines.core": "12.1.6",
-        "com.unity.shadergraph": "12.1.6",
-        "com.unity.visualeffectgraph": "12.1.6",
-        "com.unity.render-pipelines.high-definition-config": "12.1.6"
+        "com.unity.render-pipelines.core": "12.1.7",
+        "com.unity.shadergraph": "12.1.7",
+        "com.unity.visualeffectgraph": "12.1.7",
+        "com.unity.render-pipelines.high-definition-config": "12.1.7"
       }
     },
     "com.unity.render-pipelines.high-definition-config": {
-      "version": "12.1.6",
+      "version": "12.1.7",
       "depth": 1,
       "source": "builtin",
       "dependencies": {
-        "com.unity.render-pipelines.core": "12.1.6"
+        "com.unity.render-pipelines.core": "12.1.7"
       }
     },
     "com.unity.searcher": {
@@ -68,11 +68,11 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.shadergraph": {
-      "version": "12.1.6",
+      "version": "12.1.7",
       "depth": 1,
       "source": "builtin",
       "dependencies": {
-        "com.unity.render-pipelines.core": "12.1.6",
+        "com.unity.render-pipelines.core": "12.1.7",
         "com.unity.searcher": "4.9.1"
       }
     },
@@ -98,12 +98,12 @@
       }
     },
     "com.unity.visualeffectgraph": {
-      "version": "12.1.6",
+      "version": "12.1.7",
       "depth": 1,
       "source": "builtin",
       "dependencies": {
-        "com.unity.shadergraph": "12.1.6",
-        "com.unity.render-pipelines.core": "12.1.6"
+        "com.unity.shadergraph": "12.1.7",
+        "com.unity.render-pipelines.core": "12.1.7"
       }
     },
     "jp.keijiro.danish-statues": {
@@ -113,13 +113,11 @@
       "dependencies": {},
       "url": "https://registry.npmjs.com"
     },
-    "jp.supertask.cinema-paint.post-processing": {
-      "version": "file:jp.supertask.cinema-paint.post-processing",
+    "jp.supertask.cinema-paint.high-definition": {
+      "version": "file:../../jp.supertask.cinema-paint.high-definition",
       "depth": 0,
-      "source": "embedded",
-      "dependencies": {
-        "com.unity.render-pipelines.high-definition": "12.1.6"
-      }
+      "source": "local",
+      "dependencies": {}
     },
     "com.unity.modules.animation": {
       "version": "1.0.0",
