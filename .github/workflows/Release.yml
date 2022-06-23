@@ -46,7 +46,7 @@ jobs:
         fi
         git push -f -u origin upm
       env:
-        PKG_ROOT: Packages/jp.supertask.cinema-paint.post-processing
+        PKG_ROOT: jp.supertask.cinema-paint.high-definition
 
     - name: Create upm git tag
       if: steps.semantic.outputs.new_release_published == 'true'
