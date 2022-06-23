@@ -10,7 +10,9 @@ jobs:
     - uses: actions/setup-node@v2
       with:
         registry-url: 'https://registry.npmjs.org'
-    - run: npm publish
+    - run: |
+        npm install
+        npm publish
       working-directory: jp.supertask.cinema-paint.high-definition
       env:
         NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
