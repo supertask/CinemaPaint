@@ -11,6 +11,6 @@ jobs:
       with:
         registry-url: 'https://registry.npmjs.org'
     - run: npm publish
-      working-directory: Packages/Packages/jp.supertask.cinema-paint.post-processing
+      working-directory: jp.supertask.cinema-paint.high-definition
       env:
         NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
