@@ -2,11 +2,11 @@
 #define SBR_INCLUDED
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
-// Stroke Based Rendering
+// Stroke Based Oil Painting by Kyprianidis
 //////////////////////////////////////////////////////////////////////////////////////////////////
 static const int SBR_LAYER_MAX = 10;
 
-sampler2D _RT_SBR_HSV;
+TEXTURE2D(_RT_SBR_HSV);
 // レイヤ数
 int _SBRLayerCount;
 // レイヤ数の逆数
@@ -168,7 +168,7 @@ void convSBR(float2 texPos, float4 hsv, int layer, inout float4 colorSum)
 			// 近傍画素のUV上の位置
 			float2 uvNeighbor = texNeighbor * TEX2UV;
 
-			float4 tfmNeighbor = smpl(_RT_TFM, uvNeighbor);
+			float4 tfmNeighbor = smplTFM(uvNeighbor);
 			// 近傍画素の接線
 			float2 tangent = tfmNeighbor.xy;
 			// 接線と注目画素の距離（＝描き込みの緻密さ）
@@ -216,7 +216,7 @@ void convSBR(float2 texPos, float4 hsv, int layer, inout float4 colorSum)
 	}
 }
 
-float4 fragSBR(v2f_img i) : SV_Target
+float4 FragmentStrokeBasedOilPaint(Varyings i) : SV_Target
 {
 	// 注目画素の位置を0.0～1.0からテクスチャサイズに変換
 	float2 texPos = i.uv * UV2TEX;

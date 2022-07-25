@@ -153,15 +153,21 @@ float4 complementary(float4 color) {
 	return (high + low) - color;
 }
 
-inline float4 fragRGB2HSV(v2f_img i) : SV_Target{ return rgb2hsv2(tex2Dlod(_MainTex, float4(i.uv, 0, 0)).rgb); }
-inline float4 fragHSV2RGB(v2f_img i) : SV_Target{ return float4(hsv2rgb2(tex2Dlod(_MainTex, float4(i.uv, 0, 0))), 1.0); }
-inline float4 fragRGB2HSL(v2f_img i) : SV_Target{ return rgb2hsl2(tex2Dlod(_MainTex, float4(i.uv, 0, 0)).rgb); }
-inline float4 fragHSL2RGB(v2f_img i) : SV_Target{ return float4(hsl2rgb2(tex2Dlod(_MainTex, float4(i.uv, 0, 0))), 1.0); }
-inline float4 fragRGB2YUV(v2f_img i) : SV_Target{ return float4(rgb2yuv(tex2Dlod(_MainTex, float4(i.uv, 0, 0)).rgb), 1.0); }
-inline float4 fragYUV2RGB(v2f_img i) : SV_Target{ return float4(yuv2rgb(tex2Dlod(_MainTex, float4(i.uv, 0, 0))), 1.0); }
-inline float4 fragRGB2LAB(v2f_img i) : SV_Target{ return float4(rgb2lab(tex2Dlod(_MainTex, float4(i.uv, 0, 0)).rgb), 1.0); }
-inline float4 fragLAB2RGB(v2f_img i) : SV_Target{ return float4(lab2rgb(tex2Dlod(_MainTex, float4(i.uv, 0, 0))), 1.0); }
-inline float4 fragComplementary(v2f_img i) : SV_Target{ return complementary(tex2Dlod(_MainTex, float4(i.uv, 0, 0))); }
+inline float4 fragRGB2HSV(Varyings i) : SV_Target{ return rgb2hsv2(LOAD_TEXTURE2D(_InputTexture, i.uv * _ScreenSize.xy).rgb); }
+inline float4 fragHSV2RGB(Varyings i) : SV_Target{ return float4(hsv2rgb2(LOAD_TEXTURE2D(_InputTexture, i.uv * _ScreenSize.xy)), 1.0); }
+inline float4 fragRGB2HSL(Varyings i) : SV_Target{ return rgb2hsl2(LOAD_TEXTURE2D(_InputTexture, i.uv * _ScreenSize.xy).rgb); }
+inline float4 fragHSL2RGB(Varyings i) : SV_Target{ return float4(hsl2rgb2(LOAD_TEXTURE2D(_InputTexture, i.uv * _ScreenSize.xy)), 1.0); }
+inline float4 fragRGB2YUV(Varyings i) : SV_Target{ return float4(rgb2yuv(LOAD_TEXTURE2D(_InputTexture, i.uv * _ScreenSize.xy).rgb), 1.0); }
+inline float4 fragYUV2RGB(Varyings i) : SV_Target{ return float4(yuv2rgb(LOAD_TEXTURE2D(_InputTexture, i.uv * _ScreenSize.xy)), 1.0); }
+inline float4 fragRGB2LAB(Varyings i) : SV_Target{
+	//return LOAD_TEXTURE2D(_InputTexture, i.uv * _ScreenSize.xy);
+	return float4(rgb2lab(LOAD_TEXTURE2D(_InputTexture, i.uv * _ScreenSize.xy).rgb), 1.0);
+}
+inline float4 fragLAB2RGB(Varyings i) : SV_Target{
+	//return LOAD_TEXTURE2D(_InputTexture, i.uv * _ScreenSize.xy);
+	return float4(lab2rgb(LOAD_TEXTURE2D(_InputTexture, i.uv * _ScreenSize.xy)), 1.0);
+}
+inline float4 fragComplementary(Varyings i) : SV_Target{ return complementary(LOAD_TEXTURE2D(_InputTexture, i.uv * _ScreenSize.xy)); }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 // Mask
@@ -346,11 +352,14 @@ float _CCMulLum, _CCAddLum;
 float _CCInBlack, _CCInGamma, _CCInWhite;
 float _CCOutBlack, _CCOutWhite;
 
-output2 fragEntry(v2f_img i) : SV_Target
+//output2 fragEntry(Varyings i) : SV_Target
+float4 fragEntry(Varyings i) : SV_Target
 {
-	float4 color = smpl(_MainTex, i.uv);
-	float4 mask = smpl(_RT_MASK, i.uv);
+	float4 color = smplX(i.uv);
+	//float4 mask = smpl(_RT_MASK, i.uv);
 
+	/*
+	//エラーーーーー
 	// マスク領域は色補正を反映しない
 	if(mask.x < 0.5)
 	{
@@ -365,11 +374,17 @@ output2 fragEntry(v2f_img i) : SV_Target
 		lab.x = lab.x * _CCMulLum + _CCAddLum;
 		color.rgb = saturate(lab2rgb(lab));
 	}
+	*/
+	
+	//debug
+	//color = 1 - color;
 
-	output2 o;
-	o.rt[0] = color;
-	o.rt[1] = color; // _RT_WORK1は元画像用に予約
-	return o;
+	//output2 o;
+	//o.rt[0] = color;
+	//o.rt[1] = color; // _RT_WORK1は元画像用に予約
+	//return o;
+	return color;
+	//return 1;
 }
 
 

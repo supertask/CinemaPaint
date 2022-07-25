@@ -21,13 +21,16 @@ float _EdgeDarkingLenRatio, _EdgeDarkingInvLenRatio;
 float _EdgeDarkingSize;
 float _EdgeDarkingScale;
 
+// Beginning of Hand Tremor
+// =====================================================================================
+
 // 手振れを加える
 float4 addHandTremor(float2 uv, float index, float4 color)
 {
 	float invDivNum = _WCRHandTremorInvDrawCount;
 	float num = invDivNum * index;
-	float4 noise1 = smpl(_RT_WORK6, frac(uv + num));
-	float4 noise2 = smpl(_RT_WORK6, frac(1.0 - (uv + num)));
+	float4 noise1 = smplSNoise(frac(uv + num));
+	float4 noise2 = smplSNoise(frac(1.0 - (uv + num)));
 	// ランダム値の範囲を0.0～1.0から-1.0～1.0に変更
 	float2 offset1 = float2(noise1.x, noise2.x) * 2.0 - 1.0;
 	float2 offset2 = float2(noise1.y, noise2.y) * 2.0 - 1.0;
@@ -37,7 +40,7 @@ float4 addHandTremor(float2 uv, float index, float4 color)
 	offset *= _WCRHandTremorLen * UV_SIZE;
 
 	// 近傍画素がマスク領域なら歪ませない
-	float mask = smpl(_RT_MASK, uv + offset);
+	float mask = smplMask(uv + offset);
 	// retではなく注目画素を返す（retは真白の場合があるため）
 	if (mask == 1.0) { return smpl(uv); }
 
@@ -67,7 +70,7 @@ float4 addHandTremor(float2 uv, float index, float4 color)
 // 顔料の偏りを加える
 float4 addTurbulenceFow(float2 uv, float4 color)
 {
-	float2 noise = smpl(_RT_WORK6, uv).zw;
+	float2 noise = smplSNoise(uv).zw;
 	float3 hsv = rgb2hsv(color.rgb);
 
 	// 彩度が0.0だと真黒になるのでEPSILONとmaxを取る
@@ -79,31 +82,43 @@ float4 addTurbulenceFow(float2 uv, float4 color)
 	return color;
 }
 
-float4 fragHandTremor(v2f_img i) : SV_Target
+float4 FragmentHandTremor(Varyings input) : SV_Target
 {
+	UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
+	
 	// 注目画素の色ではなく真白から塗り重ねる
 	float4 ret = 1.0;
 
 	for (float index = 0.0; index < _WCRHandTremorDrawCount; index += 1.0)
 	{
-		ret = addHandTremor(i.uv, index, ret);
+		ret = addHandTremor(input.uv, index, ret);
 	}
 
 	// 注目画素がマスク領域なら歪ませない
-	//float mask = smpl(_RT_MASK, i.uv);
-	//ret = lerp(ret, smpl(i.uv), mask);
+	//float mask = smplMask(input.uv);
+	//ret = lerp(ret, smpl(input.uv), mask);
 
 	// 顔料の偏りを加える
-	ret = addTurbulenceFow(i.uv, ret);
+	ret = addTurbulenceFow(input.uv, ret);
 
 	return ret;
 }
+
+// End of Hand Tremor
+// ========================================================================================
+
+
+
+
+
+// Beginning of Water Color
+// ========================================================================================
 
 // 近傍画素が境界線上にあるかの判定
 float isEdgeWCR(float2 uv)
 {
 	static const float threshold = 0.05;
-	return step(threshold, smpl(_RT_SOBEL, uv).w * _SobelInvCarryDigit);
+	return step(threshold, smplSobelSimple(uv).w * _SobelInvCarryDigit);
 }
 // 近傍画素が境界線の反対側にあるかの判定
 // edge.x:境界線上か, edge.y:境界線に達したことがあるか, edge.z:境界線の反対側までの距離
@@ -147,8 +162,8 @@ void hueDistanceWCR(float2 uv, float4 color, inout float hueDist, inout float is
 float convWetInWet(float2 uv, float dist, float hueDist, float isDark, inout float4 color)
 {
 	// 近傍画素のオフセット込みのUVでランダム値をサンプルする
-	float noise1 = smpl(_RT_WORK7, uv.xy).x + smpl(_RT_WORK7, 1.0 - uv.xy).x;
-	float noise2 = smpl(_RT_WORK7, uv.yx).x + smpl(_RT_WORK7, 1.0 - uv.yx).x;
+	float noise1 = smplSNoise(uv.xy).x + smplSNoise(1.0 - uv.xy).x; //TODO(Tasuku): 本来はFNoiseなのでFNoiseを試す
+	float noise2 = smplSNoise(uv.yx).x + smplSNoise(1.0 - uv.yx).x; //TODO(Tasuku): 本来はFNoiseなのでFNoiseを試す
 	// ランダム値の範囲を0.0～1.0から-1.0～1.0に変更
 	float2 noise = float2(noise1, noise2);
 	float4 colorNeighbor = smpl(uv);
@@ -247,38 +262,44 @@ float4 addPigmentDispersion(float2 uv, float4 color)
 	return color;
 }
 
-float4 fragWCR(v2f_img i) : SV_Target
+float4 FragmenArtistictWaterColor(Varyings input) : SV_Target
 {
-	float4 color = smpl(i.uv);
-	color = lerp(1.0.xxxx, color, _WCROpacity);
-	float4 ret = color;
-	float isWetInWet = 0.0;
-	float dist = 0.0;
+    UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
+    
+    float4 color = smpl(input.uv);
+    color = lerp(1.0.xxxx, color, _WCROpacity);
+    float4 ret = color;
+    float isWetInWet = 0.0;
+    float dist = 0.0;
 
-	float4 tfm = smpl(_RT_TFM, i.uv);
-	float2 stepDir = tfm.xy;
-	stepDir = orthogonalize(stepDir);
+    float4 tfm = smplTFM(input.uv);
+    float2 stepDir = tfm.xy;
+    stepDir = orthogonalize(stepDir);
 
-	// マスク領域は滲ませない
-	float2 absStepDir = abs(stepDir);
-	float stepLen = 1.0 / max(absStepDir.x, absStepDir.y);
-	stepDir *= UV_SIZE;
+    // マスク領域は滲ませない
+    float2 absStepDir = abs(stepDir);
+    float stepLen = 1.0 / max(absStepDir.x, absStepDir.y);
+    stepDir *= UV_SIZE;
 
-	// 反対方向に二個所をサンプルする
-	ret = addWetInWet(i.uv, stepLen, stepDir, ret, dist, isWetInWet);
-	ret = addWetInWet(i.uv, stepLen, -stepDir, ret, dist, isWetInWet);
+    // 反対方向に二個所をサンプルする
+    ret = addWetInWet(input.uv, stepLen, stepDir, ret, dist, isWetInWet);
+    ret = addWetInWet(input.uv, stepLen, -stepDir, ret, dist, isWetInWet);
 
-	// 境界線を濃くする
-	ret = addEdgeDarking(i.uv, stepDir, ret, dist, isWetInWet);
+    // 境界線を濃くする
+    ret = addEdgeDarking(input.uv, stepDir, ret, dist, isWetInWet);
 
-	// 顔料の散らばりを加える
-	ret = addPigmentDispersion(i.uv, ret);
+    // 顔料の散らばりを加える
+    ret = addPigmentDispersion(input.uv, ret);
 
-	// 紙の質感を加える
-	float2 wrinkle = genWrinkleTextureNoise(_RT_WORK7, i.uv, 3);
-	ret = addWrinkleTexture(i.uv, wrinkle, ret);
+    // 紙の質感を加える
+    float2 wrinkle = genWrinkleTextureNoise(_RT_WORK7, input.uv, 3);
+    ret = addWrinkleTexture(input.uv, wrinkle, ret);
 
-	return ret;
+    return ret;
 }
+
+// End of Water color
+// ========================================================================================
+
 
 #endif
