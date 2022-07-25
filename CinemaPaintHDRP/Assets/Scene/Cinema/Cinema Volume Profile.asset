@@ -434,7 +434,7 @@ MonoBehaviour:
   components:
   - {fileID: 1318538762555446084}
   - {fileID: 7203078414809759670}
-  - {fileID: 8009435735549361309}
+  - {fileID: 3887190156467158062}
 --- !u!114 &1318538762555446084
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -574,6 +574,112 @@ MonoBehaviour:
     m_OverrideState: 0
     m_Value: 0
   _material: {fileID: 0}
+--- !u!114 &3887190156467158062
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b8b0abd2140afd479e79dd7b127b711, type: 3}
+  m_Name: ArtisticWaterColor
+  m_EditorClassIdentifier: 
+  active: 1
+  isEnabled:
+    m_OverrideState: 1
+    m_Value: 1
+  bleeding:
+    m_OverrideState: 0
+    m_Value: 40
+  opacity:
+    m_OverrideState: 0
+    m_Value: 0.9
+  handTremorWaveLen1:
+    m_OverrideState: 0
+    m_Value: 5
+  handTremorAmplitude1:
+    m_OverrideState: 0
+    m_Value: 20
+  handTremorWaveLen2:
+    m_OverrideState: 0
+    m_Value: 0
+  handTremorAmplitude2:
+    m_OverrideState: 0
+    m_Value: 0
+  handTremorLen:
+    m_OverrideState: 0
+    m_Value: 10
+  handTremorScale:
+    m_OverrideState: 0
+    m_Value: 1
+  handTremorDrawCount:
+    m_OverrideState: 0
+    m_Value: 16
+  handTremorOverlapCount:
+    m_OverrideState: 0
+    m_Value: 2
+  pigmentDispersionScale:
+    m_OverrideState: 0
+    m_Value: 1
+  turbulenceFowWaveLen1:
+    m_OverrideState: 0
+    m_Value: 2
+  turbulenceFowAmplitude1:
+    m_OverrideState: 0
+    m_Value: 120
+  turbulenceFowScale1:
+    m_OverrideState: 0
+    m_Value: 1.5
+  turbulenceFowWaveLen2:
+    m_OverrideState: 0
+    m_Value: 0
+  turbulenceFowAmplitude2:
+    m_OverrideState: 0
+    m_Value: 0
+  turbulenceFowScale2:
+    m_OverrideState: 0
+    m_Value: 0
+  edgeDarkingSize:
+    m_OverrideState: 0
+    m_Value: 0.1
+  edgeDarkingScale:
+    m_OverrideState: 0
+    m_Value: 0.5
+  edgeDarkingLenRatio:
+    m_OverrideState: 0
+    m_Value: 1
+  wetInWetDarkToLight:
+    m_OverrideState: 0
+    m_Value: 1
+  wetInWetHueSimilarity:
+    m_OverrideState: 0
+    m_Value: 10
+  wdgeDarkingLenRatio:
+    m_OverrideState: 0
+    m_Value: 10
+  wetInWetLow:
+    m_OverrideState: 0
+    m_Value: 0
+  wetInWetHigh:
+    m_OverrideState: 0
+    m_Value: 0.65
+  wetInWetWaveLen:
+    m_OverrideState: 0
+    m_Value: 300
+  wetInWetAmplitude:
+    m_OverrideState: 0
+    m_Value: 20
+  wetInWetLenRatio:
+    m_OverrideState: 0
+    m_Value: 0.5
+  noiseUpdateTime:
+    m_OverrideState: 0
+    m_Value: 0.0333
+  tex1:
+    m_OverrideState: 0
+    m_Value: {fileID: 0}
 --- !u!114 &4405347659257182059
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -981,6 +1087,9 @@ MonoBehaviour:
     m_OverrideState: 0
     m_Value: 1
   wetInWetHueSimilarity:
+    m_OverrideState: 0
+    m_Value: 10
+  wdgeDarkingLenRatio:
     m_OverrideState: 0
     m_Value: 10
   wetInWetLow:

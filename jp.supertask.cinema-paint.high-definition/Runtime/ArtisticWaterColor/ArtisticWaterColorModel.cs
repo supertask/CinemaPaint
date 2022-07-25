@@ -15,30 +15,6 @@ using SerializableAttribute = System.SerializableAttribute;
 
 namespace CinemaPaint.PostProcessing
 {
-    public sealed partial class ArtisticWaterColor : CustomPostProcessVolumeComponent, IPostProcessComponent
-    {
-        static class ShaderIDs
-        {
-            internal static int TempTexture1 = Shader.PropertyToID("_TempTexture1");
-
-            internal static readonly int SourceTexture = Shader.PropertyToID("_SourceTexture");
-
-            internal static readonly int InputTexture = Shader.PropertyToID("_InputTexture");
-            internal static readonly int InputTextureX = Shader.PropertyToID("_InputTextureX");
-
-            internal static readonly int WobblingPower = Shader.PropertyToID("_WobblingPower");
-            internal static readonly int WobblingTiling = Shader.PropertyToID("_WobblingTiling");
-            internal static readonly int WobblingTexture = Shader.PropertyToID("_WobblingTexture");
-            internal static readonly int EdgePower = Shader.PropertyToID("_EdgePower");
-            internal static readonly int EdgeSize = Shader.PropertyToID("_EdgeSize");
-            
-            internal static readonly int PaperPower = Shader.PropertyToID("_PaperPower");
-            internal static readonly int PaperTiling = Shader.PropertyToID("_PaperTiling");
-            internal static readonly int PaperTexture = Shader.PropertyToID("_PaperTexture");
-        }
-        
-        
-
         //////////////////////////////////////////////////////////////////////////////////////////////////
         // Color Correction
         //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -163,7 +139,7 @@ namespace CinemaPaint.PostProcessing
         //////////////////////////////////////////////////////////////////////////////////////////////////
         // Watercolor Rendering
         //////////////////////////////////////////////////////////////////////////////////////////////////
-        public class WaterColor
+        public class WaterColorParam
         {
             public float Bleeding, Opacity, HandTremorLen, HandTremorScale;
             public float HandTremorDrawCount, HandTremorInvDrawCount, HandTremorOverlapCount;
@@ -178,29 +154,30 @@ namespace CinemaPaint.PostProcessing
             public float SNoiseUpdateTime;
             public SNoise SNoise1 = new SNoise(), SNoise2 = new SNoise();
 
-            public void Set() 
+            public void Set(ArtisticWaterColor awc) 
             {
-                Bleeding = bleeding.value;
-                Opacity = opacity.value;
-                HandTremorLen = handTremorLen.value;
-                HandTremorScale = handTremorScale.value;
-                HandTremorDrawCount = handTremorDrawCount.value;
-                HandTremorInvDrawCount = 1.0f / handTremorDrawCount.value;
-                HandTremorOverlapCount = handTremorOverlapCount.value;
-                PigmentDispersionScale = pigmentDispersionScale.value; 
-                TurbulenceFowScale1 = turbulenceFowScale1.value;
-                TurbulenceFowScale2 = turbulenceFowScale2.value;
-                WetInWetLenRatio = 1.0f - wetInWetLenRatio.value;
-                WetInWetInvLenRatio = 1.0f / wetInWetLenRatio.value;
-                WetInWetLow = wetInWetLow.value;
-                WetInWetHigh = wetInWetHigh.value;
-                WetInWetDarkToLight = wetInWetDarkToLight.value ? 1.0f : 0.0f;
-                WetInWetHueSimilarity = wetInWetHueSimilarity.value;
-                EdgeDarkingLenRatio = 1.0f - wdgeDarkingLenRatio.value;
-                EdgeDarkingInvLenRatio = 1.0f / edgeDarkingLenRatio.value;
-                EdgeDarkingSize = edgeDarkingSize.value;
-                EdgeDarkingScale = edgeDarkingScale.value;
+                Bleeding = awc.bleeding.value;
+                Opacity = awc.opacity.value;
+                HandTremorLen = awc.handTremorLen.value;
+                HandTremorScale = awc.handTremorScale.value;
+                HandTremorDrawCount = awc.handTremorDrawCount.value;
+                HandTremorInvDrawCount = 1.0f / awc.handTremorDrawCount.value;
+                HandTremorOverlapCount = awc.handTremorOverlapCount.value;
+                PigmentDispersionScale = awc.pigmentDispersionScale.value; 
+                TurbulenceFowScale1 = awc.turbulenceFowScale1.value;
+                TurbulenceFowScale2 = awc.turbulenceFowScale2.value;
+                WetInWetLenRatio = 1.0f - awc.wetInWetLenRatio.value;
+                WetInWetInvLenRatio = 1.0f / awc.wetInWetLenRatio.value;
+                WetInWetLow = awc.wetInWetLow.value;
+                WetInWetHigh = awc.wetInWetHigh.value;
+                WetInWetDarkToLight = awc.wetInWetDarkToLight.value ? 1.0f : 0.0f;
+                WetInWetHueSimilarity = awc.wetInWetHueSimilarity.value;
+                EdgeDarkingLenRatio = 1.0f - awc.wdgeDarkingLenRatio.value;
+                EdgeDarkingInvLenRatio = 1.0f / awc.edgeDarkingLenRatio.value;
+                EdgeDarkingSize = awc.edgeDarkingSize.value;
+                EdgeDarkingScale = awc.edgeDarkingScale.value;
 
+                /*
                 SNoiseUpdateTime = noiseUpdateTime.value;
                 SNoise1.Size.Set(handTremorWaveLen1.value, handTremorWaveLen2.value, 
                                     turbulenceFowWaveLen1.value, turbulenceFowWaveLen2.value);
@@ -215,19 +192,46 @@ namespace CinemaPaint.PostProcessing
                 //SNoise2.Speed.Set(0.1f, 0.1f, 0.1f, 0.1f);
                 SNoise2.Speed.Set(0.0f, 0.0f, 0.0f, 0.0f);
                 SNoise2.RT = 7;
+                */
             }
         }
+   
+    
+
+    public partial class ArtisticWaterColor : CustomPostProcessVolumeComponent, IPostProcessComponent
+    {
+        static class ShaderIDs
+        {
+            internal static int TempTexture1 = Shader.PropertyToID("_TempTexture1");
+
+            internal static readonly int SourceTexture = Shader.PropertyToID("_SourceTexture");
+
+            internal static readonly int InputTexture = Shader.PropertyToID("_InputTexture");
+            internal static readonly int InputTextureX = Shader.PropertyToID("_InputTextureX");
+
+            internal static readonly int WobblingPower = Shader.PropertyToID("_WobblingPower");
+            internal static readonly int WobblingTiling = Shader.PropertyToID("_WobblingTiling");
+            internal static readonly int WobblingTexture = Shader.PropertyToID("_WobblingTexture");
+            internal static readonly int EdgePower = Shader.PropertyToID("_EdgePower");
+            internal static readonly int EdgeSize = Shader.PropertyToID("_EdgeSize");
+            
+            internal static readonly int PaperPower = Shader.PropertyToID("_PaperPower");
+            internal static readonly int PaperTiling = Shader.PropertyToID("_PaperTiling");
+            internal static readonly int PaperTexture = Shader.PropertyToID("_PaperTexture");
+        }
+        
+        
 
         private InsBF BFParameters = new InsBF();
         private InsSNoise SNoiseParameters = new InsSNoise();
         private BilateralFilter bilateralFilter = new BilateralFilter();
-        private WaterColor waterColor = new WaterColor();
+        private WaterColorParam waterColor = new WaterColorParam();
         
         public void UpdateParameters()
         {
             this.bilateralFilter.Set(BFParameters);
-            this.bilateralFilter.Set(SNoiseParameters);
-            this.waterColor.Set();
+            //this.bilateralFilter.Set(SNoiseParameters);
+            this.waterColor.Set(this);
         }
     }
 

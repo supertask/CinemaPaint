@@ -16,7 +16,7 @@ using SerializableAttribute = System.SerializableAttribute;
 namespace CinemaPaint.PostProcessing
 {
     [System.Serializable, VolumeComponentMenu("Post-processing/CinemaPaint/ArtisticWaterColor")]
-    public sealed partial class ArtisticWaterColor : CustomPostProcessVolumeComponent, IPostProcessComponent
+    public partial class ArtisticWaterColor : CustomPostProcessVolumeComponent, IPostProcessComponent
     {        
         public Bool​Parameter isEnabled = new Bool​Parameter(false);
 
@@ -50,11 +50,12 @@ namespace CinemaPaint.PostProcessing
         // ===============
 
         public ClampedFloatParameter wetInWetHueSimilarity = new ClampedFloatParameter(10.0f,  0.0f, 180.0f);
+        public ClampedFloatParameter wdgeDarkingLenRatio = new ClampedFloatParameter(10.0f,  0.0f, 180.0f);
         public ClampedFloatParameter wetInWetLow = new ClampedFloatParameter(0.0f,  0.0f, 1.0f);
         public ClampedFloatParameter wetInWetHigh = new ClampedFloatParameter(0.65f,  0.0f, 1.0f);
         public ClampedFloatParameter wetInWetWaveLen = new ClampedFloatParameter(300.0f,  0.0f, 300.0f);
         public ClampedFloatParameter wetInWetAmplitude = new ClampedFloatParameter(20.0f,  0.0f, 40.0f);
-        public ClampedFloatParameter wetInWetLenRatio = new ClampedFloatParameter(0.5f,  0.0f, 1.0f);
+        public ClampedFloatParameter wetInWetLenRatio = new ClampedFloatParameter(0.5f,  0.001f, 1.0f);
         public ClampedFloatParameter noiseUpdateTime = new ClampedFloatParameter(0.0333f,  0.0f, 10.0f);
         
         public RenderTextureParameter tex1 = new RenderTextureParameter(null);
@@ -79,12 +80,12 @@ namespace CinemaPaint.PostProcessing
         RTHandle snoiseRT1;
         RTHandle snoiseRT2;
         RTHandle[] workRTs;
-        RTHandle originRT, mainWorkRT, maskRT, sobelRT, tangentFlowMapRT, bilateralFilterRT;
+        RTHandle originRT, mainWorkRT, maskRT, sobelRT,  tangentFlowMapRT, bilateralFilterRT;
 
         MaterialPropertyBlock _prop;
         
         private int _baseWidth, _baseHeight;
-        int blitTexturePass, blitTextureXPass, entryPass, maskCameraDepthTexturePass, maskBodyPass, maskFace, sobelPass, tangentFlowMapPass, bilateralFilterPass,
+        int blitTexturePass, blitTextureXPass, entryPass, maskCameraDepthTexturePass, maskBodyPass, maskFace, sobelPass, snoisePass, tangentFlowMapPass, bilateralFilterPass,
             RGB2LABPass, LAB2RGBPass, handTremorPass, waterColorPass, debugPass;
         
 
@@ -113,6 +114,7 @@ namespace CinemaPaint.PostProcessing
             maskCameraDepthTexturePass = _material.FindPass("MaskCameraDepthTexture");
             maskBodyPass = _material.FindPass("MaskBody");
             sobelPass = _material.FindPass("SobelFilter");
+            snoisePass = _material.FindPass("SobelFilter");
             bilateralFilterPass = _material.FindPass("BF");
             tangentFlowMapPass = _material.FindPass("TangentFlowMap");
             RGB2LABPass = _material.FindPass("RGB2LAB");
@@ -163,10 +165,13 @@ namespace CinemaPaint.PostProcessing
 
             this._prop.SetTexture(ShaderIDs.InputTextureX, srcRT);
             HDUtils.DrawFullScreen(cmd, this._material, originRT, this._prop, this.blitTextureXPass);
+            
+            
 
             Entry(cmd, srcRT, mainWorkRT);
-            //RunNoise();
-            RunBilateralFilter(cmd, mainWorkRT, workRTs[6]); //shader.GetRT(shader.RT_WORK0)
+            RunSNoise();
+            RunDebug(cmd, snoiseRT1, destRT);
+            //RunBilateralFilter(cmd, mainWorkRT, workRTs[6]); //shader.GetRT(shader.RT_WORK0)
             //this._prop.SetTexture(ShaderIDs.InputTexture, originRT);
             //HDUtils.DrawFullScreen(cmd, this._material, mainWorkRT, this._prop, this.RGB2LABPass);
 
@@ -178,13 +183,12 @@ namespace CinemaPaint.PostProcessing
             //RunDebug(cmd, mainWorkRT, destRT);
 
 
-            this.RenderHandTremor(workRTs[6], mainWorkRT);
-            //this.RenderHandTremor(cmd, this.workRTs[0], this.workRTs[4]);
+            //this.RenderHandTremor(workRTs[6], mainWorkRT);
+            this.RenderWaterColor(cmd, workRTs[6], mainWorkRT);
             //Swap(this.tempRT4, tempRT0);
             //RunDebug(cmd, workRTs[6], destRT);
 
-            SST(cmd);
-            this.RenderWaterColor();
+            //this.RenderWaterColor();
             //shader.UpdateWCR(wcr);
             //shader.RenderWCR(shader.RT_WORK4, destRT, wcr);
 
@@ -221,20 +225,20 @@ namespace CinemaPaint.PostProcessing
             //HDUtils.DrawFullScreen(cmd, this._material, maskRT, this._prop, this.maskBodyPass); // for stencil buffer
         }
         
-        private void RunNoise()
+        private void RunSNoise()
         {
-            /*
             // ノイズ生成の負荷が大きいので毎フレーム呼ばないようにする
-            timeElapsedWCR += Time.deltaTime;
-            if(timeElapsedWCR >= waterColor.SNoiseUpdateTime)
-            { 
-                timeElapsedWCR = 0.0f;
-                shader.UpdateSNoise(waterColor.SNoise1);
-                shader.RenderSNoise(waterColor.SNoise1.RT, waterColor.SNoise1);
-                shader.UpdateSNoise(waterColor.SNoise2);
-                shader.RenderSNoise(waterColor.SNoise2.RT, waterColor.SNoise2);
-            }
-            */
+            //timeElapsedWCR += Time.deltaTime;
+            //if(timeElapsedWCR >= waterColor.SNoiseUpdateTime)
+            //{ 
+            //    timeElapsedWCR = 0.0f;
+            //}
+            
+            this._prop.SetVector("_SNOIZE_SIZE", noise.Size);
+            this._prop.SetVector("_SNOIZE_SCALE", noise.Scale);
+            this._prop.SetVector("_SNOIZE_SPEED", noise.Speed);
+            this._prop.SetTexture("_RT_SNOISE", snoiseRT1);
+            HDUtils.DrawFullScreen(cmd, this._material, snoiseRT1, this._prop, this.snoisePass);
         }
         
         private void SST(CommandBuffer cmd, RTHandle srcRT)
@@ -343,7 +347,11 @@ namespace CinemaPaint.PostProcessing
             this._prop.SetFloat("_WCRTurbulenceFowScale1", waterColor.TurbulenceFowScale1);
             this._prop.SetFloat("_WCRTurbulenceFowScale2", waterColor.TurbulenceFowScale2);
             HDUtils.DrawFullScreen(cmd, this._material, workRTs[4], this._prop, this.handTremorPass);
+            
+            SST(cmd, workRTs[4]);
 
+            /*
+            // Water color
             this._prop.SetTexture(ShaderIDs.InputTexture, workRTs[4]);
             this._prop.SetFloat("_WetInWetLenRatio", waterColor.WetInWetLenRatio);
             this._prop.SetFloat("_WetInWetInvLenRatio", waterColor.WetInWetInvLenRatio);
@@ -357,6 +365,7 @@ namespace CinemaPaint.PostProcessing
             this._prop.SetFloat("_EdgeDarkingScale", waterColor.EdgeDarkingScale);
 
             HDUtils.DrawFullScreen(cmd, this._material, destRT, this._prop, this.waterColorPass);
+            */
 
         }        
 
