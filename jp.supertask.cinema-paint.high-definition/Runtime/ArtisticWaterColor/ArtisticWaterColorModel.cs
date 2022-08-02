@@ -177,22 +177,20 @@ namespace CinemaPaint.PostProcessing
                 EdgeDarkingSize = awc.edgeDarkingSize.value;
                 EdgeDarkingScale = awc.edgeDarkingScale.value;
 
-                /*
-                SNoiseUpdateTime = noiseUpdateTime.value;
-                SNoise1.Size.Set(handTremorWaveLen1.value, handTremorWaveLen2.value, 
-                                    turbulenceFowWaveLen1.value, turbulenceFowWaveLen2.value);
-                SNoise1.Scale.Set(handTremorAmplitude1.value, handTremorAmplitude2.value, 
-                                    turbulenceFowAmplitude1.value, turbulenceFowAmplitude2.value);
+                SNoiseUpdateTime = awc.noiseUpdateTime.value;
+                SNoise1.Size.Set(awc.handTremorWaveLen1.value, awc.handTremorWaveLen2.value, 
+                                    awc.turbulenceFowWaveLen1.value, awc.turbulenceFowWaveLen2.value);
+                SNoise1.Scale.Set(awc.handTremorAmplitude1.value, awc.handTremorAmplitude2.value, 
+                                    awc.turbulenceFowAmplitude1.value, awc.turbulenceFowAmplitude2.value);
                 //SNoise1.Speed.Set(0.1f, 0.1f, 0.1f, 0.1f);
                 SNoise1.Speed.Set(0.0f, 0.0f, 0.0f, 0.0f);
                 SNoise1.RT = 6;
 
-                SNoise2.Size.Set(wetInWetWaveLen.value, 1.0f, 1.0f, wrinkleWaveLen.value);
-                SNoise2.Scale.Set(wetInWetAmplitude.value, 1.0f, 1.0f, wrinkleAmplitude.value);
+                SNoise2.Size.Set(awc.wetInWetWaveLen.value, 1.0f, 1.0f, awc.wrinkleWaveLen.value);
+                SNoise2.Scale.Set(awc.wetInWetAmplitude.value, 1.0f, 1.0f, awc.wrinkleAmplitude.value);
                 //SNoise2.Speed.Set(0.1f, 0.1f, 0.1f, 0.1f);
                 SNoise2.Speed.Set(0.0f, 0.0f, 0.0f, 0.0f);
                 SNoise2.RT = 7;
-                */
             }
         }
    
@@ -207,6 +205,10 @@ namespace CinemaPaint.PostProcessing
             internal static readonly int SourceTexture = Shader.PropertyToID("_SourceTexture");
 
             internal static readonly int InputTexture = Shader.PropertyToID("_InputTexture");
+            internal static readonly int SnoiseTexture = Shader.PropertyToID("_RT_SNOISE");
+            internal static readonly int MaskTexture = Shader.PropertyToID("_RT_MASK");
+            internal static readonly int SobelTexture = Shader.PropertyToID("_RT_SOBEL");
+            internal static readonly int TangentFlowMapTexture = Shader.PropertyToID("_RT_TFM");
             internal static readonly int InputTextureX = Shader.PropertyToID("_InputTextureX");
 
             internal static readonly int WobblingPower = Shader.PropertyToID("_WobblingPower");
@@ -223,14 +225,18 @@ namespace CinemaPaint.PostProcessing
         
 
         private InsBF BFParameters = new InsBF();
-        private InsSNoise SNoiseParameters = new InsSNoise();
         private BilateralFilter bilateralFilter = new BilateralFilter();
+
+        private InsSNoise SNoiseParameters = new InsSNoise();
+        private SNoise snoise = new SNoise();
+
         private WaterColorParam waterColor = new WaterColorParam();
+
         
         public void UpdateParameters()
         {
             this.bilateralFilter.Set(BFParameters);
-            //this.bilateralFilter.Set(SNoiseParameters);
+            this.snoise.Set(SNoiseParameters);
             this.waterColor.Set(this);
         }
     }

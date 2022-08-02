@@ -207,7 +207,7 @@ float4 addWetInWet(float2 uv, float2 stepLen, float2 stepDir, float4 color,
 		float2 uvNeighbor = uv + offset;
 
 		// 近傍画素がマスク領域なら滲ませない
-		float mask = smpl(_RT_MASK, uvNeighbor);
+		float mask = smplMask(uvNeighbor);
 		if (mask == 1.0) { return color; }
 
 		float hueDist = 0.0, isDark = 0.0;
@@ -267,12 +267,15 @@ float4 FragmenArtistictWaterColor(Varyings input) : SV_Target
     UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
     
     float4 color = smpl(input.uv);
+	//return color;
+
     color = lerp(1.0.xxxx, color, _WCROpacity);
     float4 ret = color;
     float isWetInWet = 0.0;
     float dist = 0.0;
 
     float4 tfm = smplTFM(input.uv);
+	//return tfm;
     float2 stepDir = tfm.xy;
     stepDir = orthogonalize(stepDir);
 
@@ -281,6 +284,7 @@ float4 FragmenArtistictWaterColor(Varyings input) : SV_Target
     float stepLen = 1.0 / max(absStepDir.x, absStepDir.y);
     stepDir *= UV_SIZE;
 
+    //return ret;
     // 反対方向に二個所をサンプルする
     ret = addWetInWet(input.uv, stepLen, stepDir, ret, dist, isWetInWet);
     ret = addWetInWet(input.uv, stepLen, -stepDir, ret, dist, isWetInWet);
@@ -289,10 +293,10 @@ float4 FragmenArtistictWaterColor(Varyings input) : SV_Target
     ret = addEdgeDarking(input.uv, stepDir, ret, dist, isWetInWet);
 
     // 顔料の散らばりを加える
-    ret = addPigmentDispersion(input.uv, ret);
+    ret = addPigmentDispersion(input.uv, ret); //バグってそう
 
     // 紙の質感を加える
-    float2 wrinkle = genWrinkleTextureNoise(_RT_WORK7, input.uv, 3);
+    float2 wrinkle = genWrinkleTextureNoise(input.uv, 3);
     ret = addWrinkleTexture(input.uv, wrinkle, ret);
 
     return ret;

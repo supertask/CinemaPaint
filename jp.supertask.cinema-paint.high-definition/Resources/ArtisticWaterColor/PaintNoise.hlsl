@@ -153,6 +153,9 @@ float fBmSNoise(float2 uv, float seed, float size, float scale, float speed)
 }
 float4 fragSNoise(Varyings i) : SV_Target
 {
+	//return float4(i.uv, 0.0, 1.0);
+	//return 1.0;
+
 	float x = fBmSNoise(i.uv, RAND_SEED4.x, _SNOIZE_SIZE.x, _SNOIZE_SCALE.x, _SNOIZE_SPEED.x);
 	float y = fBmSNoise(i.uv, RAND_SEED4.y, _SNOIZE_SIZE.y, _SNOIZE_SCALE.y, _SNOIZE_SPEED.y);
 	float z = fBmSNoise(i.uv, RAND_SEED4.w, _SNOIZE_SIZE.z, _SNOIZE_SCALE.z, _SNOIZE_SPEED.z);
@@ -164,8 +167,10 @@ float4x4 getSNoise4x4(float2 uv)
 {
 	float4x4 noise = 
 	{
-		smpl(_RT_SNOISE, uv.xy), smpl(_RT_SNOISE, 1.0 - uv.xy),
-		smpl(_RT_SNOISE, uv.yx), smpl(_RT_SNOISE, 1.0 - uv.yx)
+		//smpl(_RT_SNOISE, uv.xy), smpl(_RT_SNOISE, 1.0 - uv.xy),
+		//smpl(_RT_SNOISE, uv.yx), smpl(_RT_SNOISE, 1.0 - uv.yx)
+		smplSNoise(uv.xy), smplSNoise(1- uv.xy),
+		smplSNoise(uv.yx), smplSNoise(1- uv.yx),
 	};
 	// インスペクタのスライダごとに機能と紐付けたいので転置する
 	// （一つの機能を複数のスライダに紐付けると調整が複雑になるため）

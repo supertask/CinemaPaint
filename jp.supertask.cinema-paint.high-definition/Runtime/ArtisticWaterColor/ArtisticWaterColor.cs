@@ -21,7 +21,7 @@ namespace CinemaPaint.PostProcessing
         public Bool​Parameter isEnabled = new Bool​Parameter(false);
 
         public ClampedFloatParameter bleeding = new ClampedFloatParameter(40.0f,  0.1f, 40.0f);
-        public ClampedFloatParameter opacity = new ClampedFloatParameter(0.9f,  0.0f, 1.0f);
+        public ClampedFloatParameter opacity = new ClampedFloatParameter(1.0f,  0.0f, 1.0f);
         public ClampedFloatParameter handTremorWaveLen1 = new ClampedFloatParameter(5.0f,  0.0f, 100.0f);
         public ClampedFloatParameter handTremorAmplitude1 = new ClampedFloatParameter(20.0f,  0.0f, 100.0f);
         public ClampedFloatParameter handTremorWaveLen2 = new ClampedFloatParameter(0.0f,  0.0f, 100.0f);
@@ -30,7 +30,7 @@ namespace CinemaPaint.PostProcessing
         public ClampedFloatParameter handTremorScale = new ClampedFloatParameter(1.0f,  0.0f, 3.0f);
         public ClampedIntParameter handTremorDrawCount = new ClampedIntParameter(16,  0, 32);
         public ClampedIntParameter handTremorOverlapCount = new ClampedIntParameter(2,  2, 4);
-        public ClampedFloatParameter pigmentDispersionScale = new ClampedFloatParameter(1.0f,  0.0f, 4.0f);
+        public ClampedFloatParameter pigmentDispersionScale = new ClampedFloatParameter(1.5f,  0.0f, 4.0f); //1.0がデフォルトだったが 1.5の方がいい気もする. TODO(Tasuku): 後で調整
         public ClampedFloatParameter turbulenceFowWaveLen1 = new ClampedFloatParameter(2.0f,  0.0f, 4.0f);
         public ClampedFloatParameter turbulenceFowAmplitude1 = new ClampedFloatParameter(120.0f,  0.0f, 300.0f);
         public ClampedFloatParameter turbulenceFowScale1 = new ClampedFloatParameter(1.5f,  0.0f, 4.0f);
@@ -57,6 +57,9 @@ namespace CinemaPaint.PostProcessing
         public ClampedFloatParameter wetInWetAmplitude = new ClampedFloatParameter(20.0f,  0.0f, 40.0f);
         public ClampedFloatParameter wetInWetLenRatio = new ClampedFloatParameter(0.5f,  0.001f, 1.0f);
         public ClampedFloatParameter noiseUpdateTime = new ClampedFloatParameter(0.0333f,  0.0f, 10.0f);
+
+        public ClampedFloatParameter wrinkleWaveLen = new ClampedFloatParameter(20.0f,  0.0f, 40.0f);
+        public ClampedFloatParameter wrinkleAmplitude = new ClampedFloatParameter(5.0f,  0.0f, 10.0f);
         
         public RenderTextureParameter tex1 = new RenderTextureParameter(null);
 
@@ -114,7 +117,7 @@ namespace CinemaPaint.PostProcessing
             maskCameraDepthTexturePass = _material.FindPass("MaskCameraDepthTexture");
             maskBodyPass = _material.FindPass("MaskBody");
             sobelPass = _material.FindPass("SobelFilter");
-            snoisePass = _material.FindPass("SobelFilter");
+            snoisePass = _material.FindPass("SimplexNoise");
             bilateralFilterPass = _material.FindPass("BF");
             tangentFlowMapPass = _material.FindPass("TangentFlowMap");
             RGB2LABPass = _material.FindPass("RGB2LAB");
@@ -162,19 +165,18 @@ namespace CinemaPaint.PostProcessing
                 _baseHeight = camera.actualHeight;
             }
 
-
+            //Texture2DArray to Texture2D
             this._prop.SetTexture(ShaderIDs.InputTextureX, srcRT);
             HDUtils.DrawFullScreen(cmd, this._material, originRT, this._prop, this.blitTextureXPass);
             
-            
 
             Entry(cmd, srcRT, mainWorkRT);
-            RunSNoise();
-            RunDebug(cmd, snoiseRT1, destRT);
-            //RunBilateralFilter(cmd, mainWorkRT, workRTs[6]); //shader.GetRT(shader.RT_WORK0)
-            //this._prop.SetTexture(ShaderIDs.InputTexture, originRT);
-            //HDUtils.DrawFullScreen(cmd, this._material, mainWorkRT, this._prop, this.RGB2LABPass);
+            RunSNoise(cmd, waterColor.SNoise1, snoiseRT1);
+            RunSNoise(cmd, waterColor.SNoise2, snoiseRT2);
+            RunBilateralFilter(cmd, mainWorkRT, workRTs[6]); //shader.GetRT(shader.RT_WORK0)
+            Swap(ref mainWorkRT, ref workRTs[6]);
 
+            //RunDebug(cmd, snoiseRT1, destRT);
             //RunDebug(cmd, sobelRT, destRT);
             //RunDebug(cmd, tangentFlowMapRT, destRT);
             //RunDebug(cmd, workRTs[3], destRT);
@@ -182,18 +184,16 @@ namespace CinemaPaint.PostProcessing
             //RunDebug(cmd, workRTs[6], destRT);
             //RunDebug(cmd, mainWorkRT, destRT);
 
-
+            this.RenderWaterColor(cmd, mainWorkRT, destRT);
             //this.RenderHandTremor(workRTs[6], mainWorkRT);
-            this.RenderWaterColor(cmd, workRTs[6], mainWorkRT);
             //Swap(this.tempRT4, tempRT0);
-            //RunDebug(cmd, workRTs[6], destRT);
-
-            //this.RenderWaterColor();
-            //shader.UpdateWCR(wcr);
-            //shader.RenderWCR(shader.RT_WORK4, destRT, wcr);
-
-            //this._prop.SetTexture(ShaderIDs.InputTexture, maskRT);
-            //this._prop.SetTexture("_RT_MASK", workRTs[0]);
+            //RunDebug(cmd, workRTs[4], destRT); //Only thmor
+            //RunDebug(cmd, workRTs[2], destRT); //all
+            //RunDebug(cmd, workRTs[6], destRT); //input
+            //RunDebug(cmd, maskRT, destRT);
+            //RunDebug(cmd, workRTs[2], destRT);
+            //RunDebug(cmd, sobelRT, destRT);
+            //RunDebug(cmd, tangentFlowMapRT, destRT);
         }        
 
         private void Entry(CommandBuffer cmd, RTHandle srcRT, RTHandle destRT)
@@ -225,7 +225,7 @@ namespace CinemaPaint.PostProcessing
             //HDUtils.DrawFullScreen(cmd, this._material, maskRT, this._prop, this.maskBodyPass); // for stencil buffer
         }
         
-        private void RunSNoise()
+        private void RunSNoise(CommandBuffer cmd, SNoise snoise, RTHandle destRT)
         {
             // ノイズ生成の負荷が大きいので毎フレーム呼ばないようにする
             //timeElapsedWCR += Time.deltaTime;
@@ -234,11 +234,10 @@ namespace CinemaPaint.PostProcessing
             //    timeElapsedWCR = 0.0f;
             //}
             
-            this._prop.SetVector("_SNOIZE_SIZE", noise.Size);
-            this._prop.SetVector("_SNOIZE_SCALE", noise.Scale);
-            this._prop.SetVector("_SNOIZE_SPEED", noise.Speed);
-            this._prop.SetTexture("_RT_SNOISE", snoiseRT1);
-            HDUtils.DrawFullScreen(cmd, this._material, snoiseRT1, this._prop, this.snoisePass);
+            this._prop.SetVector("_SNOIZE_SIZE",  snoise.Size);
+            this._prop.SetVector("_SNOIZE_SCALE", snoise.Scale);
+            this._prop.SetVector("_SNOIZE_SPEED", snoise.Speed);
+            HDUtils.DrawFullScreen(cmd, this._material, destRT, this._prop, this.snoisePass);
         }
         
         private void SST(CommandBuffer cmd, RTHandle srcRT)
@@ -250,7 +249,7 @@ namespace CinemaPaint.PostProcessing
             this._prop.SetTexture(ShaderIDs.InputTexture, srcRT);
             HDUtils.DrawFullScreen(cmd, this._material, sobelRT, this._prop, this.sobelPass);
 
-            this._prop.SetTexture("_RT_SOBEL", sobelRT); // 後段のためにRTを登録しておく
+            this._prop.SetTexture(ShaderIDs.SobelTexture, sobelRT); // 後段のためにRTを登録しておく
             this._prop.SetFloat("_SobelInvCarryDigit", 1.0f / CARRY_DIGIT); // 後段のために桁下げを登録しておく
 
             //
@@ -290,10 +289,12 @@ namespace CinemaPaint.PostProcessing
             this._prop.SetFloat("_BFStepDirScale", bilateralFilter.StepDirScale);
             this._prop.SetFloat("_BFStepLenScale", bilateralFilter.StepLenScale);
             
+            /*
             Debug.LogFormat("SampleLen = {0}, DomainVariance = {1}, DomainBias = {2}, RangeVariance = {3}, RangeBias = {4}, RangeThreshold = {5}, StepDirScale = {6}, StepLenScale = {7}",
                 bilateralFilter.SampleLen, bilateralFilter.DomainVariance, bilateralFilter.DomainBias,
                 bilateralFilter.RangeVariance, bilateralFilter.RangeBias, bilateralFilter.RangeThreshold,
                 bilateralFilter.StepDirScale, bilateralFilter.StepLenScale);
+            */
 
             //for(int i = 0; i < 256; i++)
             //{
@@ -336,6 +337,8 @@ namespace CinemaPaint.PostProcessing
         {
             // Hand Tremor
             this._prop.SetTexture(ShaderIDs.InputTexture, srcRT);
+            this._prop.SetTexture(ShaderIDs.SnoiseTexture, snoiseRT1);
+            //this._prop.SetTexture(ShaderIDs.MaskTexture, maskRT); //TODO(Tasuku): !!!!マスクがある領域は処理がされない!!!!
             this._prop.SetFloat("_WCRBleeding", waterColor.Bleeding);
             this._prop.SetFloat("_WCROpacity", waterColor.Opacity);
             this._prop.SetFloat("_WCRHandTremorLen", waterColor.HandTremorLen);
@@ -349,10 +352,16 @@ namespace CinemaPaint.PostProcessing
             HDUtils.DrawFullScreen(cmd, this._material, workRTs[4], this._prop, this.handTremorPass);
             
             SST(cmd, workRTs[4]);
+            //SST(cmd, srcRT);
 
-            /*
+            //ここでバグってそう
             // Water color
             this._prop.SetTexture(ShaderIDs.InputTexture, workRTs[4]);
+            //this._prop.SetTexture(ShaderIDs.InputTexture, srcRT);
+            this._prop.SetTexture(ShaderIDs.MaskTexture, maskRT);
+            this._prop.SetTexture(ShaderIDs.TangentFlowMapTexture, tangentFlowMapRT); //必須
+            this._prop.SetTexture(ShaderIDs.SobelTexture, sobelRT);
+            this._prop.SetTexture(ShaderIDs.SnoiseTexture, snoiseRT2);
             this._prop.SetFloat("_WetInWetLenRatio", waterColor.WetInWetLenRatio);
             this._prop.SetFloat("_WetInWetInvLenRatio", waterColor.WetInWetInvLenRatio);
             this._prop.SetFloat("_WetInWetLow", waterColor.WetInWetLow);
@@ -365,8 +374,6 @@ namespace CinemaPaint.PostProcessing
             this._prop.SetFloat("_EdgeDarkingScale", waterColor.EdgeDarkingScale);
 
             HDUtils.DrawFullScreen(cmd, this._material, destRT, this._prop, this.waterColorPass);
-            */
-
         }        
 
         

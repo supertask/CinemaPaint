@@ -214,10 +214,15 @@ Shader "Hidden/CinemaPaint/PostProcess/ArtisticWaterColor"
 //		}
 		Pass
 		{
-			Name "SNoise"
+			Name "SimplexNoise"
 			HLSLPROGRAM
 			#pragma vertex Vertex
 			#pragma fragment fragSNoise
+//			#pragma fragment fragMask
+//			float4 fragMask(Varyings i) : SV_Target{
+//				return 1.0;
+//			}
+
 			ENDHLSL
 		}
 		

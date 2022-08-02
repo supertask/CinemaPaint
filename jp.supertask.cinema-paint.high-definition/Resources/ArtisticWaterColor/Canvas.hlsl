@@ -9,15 +9,17 @@ float _RuledLineInvSize;
 float4 _RuledLineRotMat;
 float _WrinkleDensity;
 
+//inline float4 smplSNoise2(float2 uv) { return LOAD_TEXTURE2D(_RT_SNOISE, uv * _ScreenSize.xy); }
+
 // 別途RTを用意するコストを避けたいのでノイズの生成処理を分離
-float2 genWrinkleTextureNoise(Texture2D<float4> rt, float2 uv, int index)
+float2 genWrinkleTextureNoise(float2 uv, int index)
 {
 	float2 h = float2(UV_SIZE.x, 0.0);
 	float2 v = float2(0.0, UV_SIZE.y);
-	float4 noise1 = smpl(rt, uv + h);
-	float4 noise2 = smpl(rt, uv - h);
-	float4 noise3 = smpl(rt, uv + v);
-	float4 noise4 = smpl(rt, uv - v);
+	float4 noise1 = smplSNoise( uv + h);
+	float4 noise2 = smplSNoise( uv - h);
+	float4 noise3 = smplSNoise(uv + v);
+	float4 noise4 = smplSNoise(uv - v);
 
 	return float2(noise1[index] - noise2[index], noise3[index] - noise4[index]);
 }

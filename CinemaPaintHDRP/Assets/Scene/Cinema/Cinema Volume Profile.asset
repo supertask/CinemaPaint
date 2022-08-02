@@ -595,7 +595,7 @@ MonoBehaviour:
     m_Value: 40
   opacity:
     m_OverrideState: 0
-    m_Value: 0.9
+    m_Value: 1
   handTremorWaveLen1:
     m_OverrideState: 0
     m_Value: 5
@@ -622,7 +622,7 @@ MonoBehaviour:
     m_Value: 2
   pigmentDispersionScale:
     m_OverrideState: 0
-    m_Value: 1
+    m_Value: 1.5
   turbulenceFowWaveLen1:
     m_OverrideState: 0
     m_Value: 2
@@ -677,6 +677,12 @@ MonoBehaviour:
   noiseUpdateTime:
     m_OverrideState: 0
     m_Value: 0.0333
+  wrinkleWaveLen:
+    m_OverrideState: 0
+    m_Value: 20
+  wrinkleAmplitude:
+    m_OverrideState: 0
+    m_Value: 5
   tex1:
     m_OverrideState: 0
     m_Value: {fileID: 0}
@@ -1110,6 +1116,12 @@ MonoBehaviour:
   noiseUpdateTime:
     m_OverrideState: 0
     m_Value: 0.0333
+  wrinkleWaveLen:
+    m_OverrideState: 0
+    m_Value: 20
+  wrinkleAmplitude:
+    m_OverrideState: 0
+    m_Value: 5
   tex1:
     m_OverrideState: 0
     m_Value: {fileID: 0}

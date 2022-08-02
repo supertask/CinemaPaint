@@ -45,7 +45,8 @@ static const float4x4 NEIGHBOR8_UNITVEC_ORTHO =
 	{ { 0, 1 }, { -INV_SQRT2, -INV_SQRT2 } }, { { -1, 0 }, { -INV_SQRT2, INV_SQRT2 } }
 };
 
-static const float2 TEX_SIZE = _InputTexture_TexelSize.zw;
+//static const float2 TEX_SIZE = _InputTexture_TexelSize.zw;
+static const float2 TEX_SIZE = _ScreenSize.xy;
 static const float2 UV_SIZE = _InputTexture_TexelSize.xy;
 static const float2 TEX2UV = _InputTexture_TexelSize.xy;
 static const float2 UV2TEX = _InputTexture_TexelSize.zw;
