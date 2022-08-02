@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: DancingGirl
+  m_Name: DancingGirlUnlit
   m_Shader: {fileID: 4800000, guid: 73ae9ae7fd991074ab5c3322b6142d72, type: 3}
   m_ValidKeywords:
   - _DISABLE_SSR_TRANSPARENT

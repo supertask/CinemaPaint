@@ -1,12 +1,5 @@
-//
-// Cinema
-//
-// MIT License
-// Copyright (c) 2021 Tasuku TAKAHASHI
-// Copyright (c) 2018 kaiware007
-//     UnityVJShaderSlide20181108, https://github.com/kaiware007/UnityVJShaderSlide20181108
-// Copyright (C) 2011 by Ian McEwan, Ashima Arts (Simplex noise)
-// Copyright (C) 2011-2016 by Stefan Gustavson (Classic noise and others)
+#ifndef NOISE_INCLUDED
+#define NOISE_INCLUDED
 //
 // Description : Array and textureless GLSL 2D simplex noise function.
 //      Author : Ian McEwan, Ashima Arts.
@@ -15,10 +8,7 @@
 //     License : Copyright (C) 2011 Ashima Arts. All rights reserved.
 //               Distributed under the MIT License. See LICENSE file.
 //               https://github.com/ashima/webgl-noise
-//
-#ifndef NOISE_INCLUDED
-#define NOISE_INCLUDED
-
+// 
 float4 mod289(float4 x) {
 	return x - floor(x * (1.0 / 289.0)) * 289.0;
 }
@@ -474,41 +464,59 @@ float valueNoise(float2 _st) {
 }
 
 
+// FBM https://thebookofshaders.com/13/
 // Based on Morgan McGuire @morgan3d
 // https://www.shadertoy.com/view/4dS3Wd
-float morganNoise(float2 _st) {
-	float2 i = floor(_st);
-	float2 f = frac(_st);
-
-	// Four corners in 2D of a tile
-	float a = random(i);
-	float b = random(i + float2(1.0, 0.0));
-	float c = random(i + float2(0.0, 1.0));
-	float d = random(i + float2(1.0, 1.0));
-
-	float2 u = f * f * (3.0 - 2.0 * f);
-
-	return lerp(a, b, u.x) +
-		(c - a)* u.y * (1.0 - u.x) +
-		(d - b) * u.x * u.y;
-}
-
-#define NUM_OCTAVES 5
-
-// Based on Morgan McGuire @morgan3d
-// https://www.shadertoy.com/view/4dS3Wd
-float fbm(float2 _st) {
+float fbm2DWithValueNoise(float2 _st, int numOfOctaves) {
 	float v = 0.0;
 	float a = 0.5;
 	float2 shift = float2(10.0, 10.0);
 	// Rotate to reduce axial bias
 	float2x2 rot = float2x2(cos(0.5), sin(0.5),
 		-sin(0.5), cos(0.50));
-	for (int i = 0; i < NUM_OCTAVES; ++i) {
-		v += a * morganNoise(_st);
+	for (int i = 0; i < numOfOctaves; ++i) {
+		v += a * valueNoise(_st);
 		_st = mul(rot, _st * 2.0 + shift);
 		a *= 0.5;
 	}
 	return v;
 }
+
+//
+// FBM with simplex noise
+// Ref. Keijiro, https://github.com/keijiro/Klak/blob/b38ec4dbc0c614fd6fba08c44ddef80783855c02/Assets/Klak/Math/Runtime/Perlin.cs#L109
+//
+float fbmWithSimplex(float u, int numOfOctaves) {
+	float f = 0.0;
+	float w = 0.5;
+	for (int i = 0; i < numOfOctaves; i++) {
+		f += w * snoise(float2(u, 0.0));
+		u *= 2.0;
+		w *= 0.5;
+	}
+	return f;
+}
+
+float fbmWithSimplex(float2 uv, int numOfOctaves) {
+	float f = 0.0;
+	float w = 0.5;
+	for (int i = 0; i < numOfOctaves; i++) {
+		f += w * snoise(uv);
+		uv *= 2.0;
+		w *= 0.5;
+	}
+	return f;
+}
+
+float fbmWithSimplex(float3 uv, int numOfOctaves) {
+	float f = 0.0;
+	float w = 0.5;
+	for (int i = 0; i < numOfOctaves; i++) {
+		f += w * snoise(uv);
+		uv *= 2.0;
+		w *= 0.5;
+	}
+	return f;
+}
+
 #endif // NOISE_INCLUDED
