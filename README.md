@@ -29,16 +29,28 @@ Effects
 
 ## Demo
 
+https://github.com/TranscendVFX/VFXGraphIntermediate
 
 
-## How to install
+## How To Install
 
+This package uses the [scoped registry] feature to resolve package
+dependencies. Open the Package Manager page in the Project Settings window and
+add the following entry to the Scoped Registries list:
 
-Write a package path on manifest.json
+- Name: `Tasuku`
+- URL: `https://registry.npmjs.com`
+- Scope: `jp.supertask`
 
-```
-"jp.supertask.cinema-paint.post-processing": "https://github.com/supertask/CinemaPaint.git?path=/Packages/jp.supertask.cinema-paint.post-processing",
-```
+![Scoped Registry](./images/scopedRegistries.png)
+
+Now you can install the package from My Registries page in the Package Manager
+window.
+
+![My Registries](./images/MyRegistries.png)
+
+[scoped registry]: https://docs.unity3d.com/Manual/upm-scoped.html
+
 
 
 ## How to setup
@@ -51,11 +63,10 @@ Define custom post processing orders to make them take effect in the pipeline.
 ## More effects?
 
 - [Kino](https://github.com/keijiro/Kino)
-    - for edge, streak, and more image effects.
 - [Cinema](https://github.com/supertask/Cinema)
-- 
 
 
 ## Acknowledge
 
 - nobnak, WaterColorFilter, https://github.com/nobnak/WaterColorFilter
+- t-takasaka, Watercolor Rendering, https://github.com/t-takasaka/UnityPostEffectsLibrary
