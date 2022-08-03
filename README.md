@@ -24,7 +24,7 @@ Effects
 
 ### Artistic water color
 
-![Artistic water color](./images/PhoenixArticsticWaterColor.jpg)
+![Artistic water color](./images/PhoenixArticsticWaterColor2.jpg)
 
 
 ## Demo
