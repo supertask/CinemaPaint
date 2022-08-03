@@ -9,16 +9,23 @@ Work in progress...
 [HDRP]:
     https://docs.unity3d.com/Packages/com.unity.render-pipelines.high-definition@latest
 
-System Requirements
+Tested environment
 -------------------
 
 - Unity 2021.1
-- HDRP 11.0
+- HDRP 12.1
 
 Effects
 -------
 
-### Radiation Blur
+### Simple water color
+
+![Simple water color](./images/PhoenixSimpleWaterColor.jpg)
+
+### Artistic water color
+
+![Artistic water color](./images/PhoenixArticstiWaterColor.jpg)
+
 
 ## Demo
 
@@ -38,7 +45,7 @@ Write a package path on manifest.json
 
 Define custom post processing orders to make them take effect in the pipeline.
 
-![screenshot](./images/postProcessingSetup.jpg)
+![screenshot](./images/postProcessingSetup.png)
 
 
 ## More effects?
