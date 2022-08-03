@@ -171,10 +171,13 @@ namespace CinemaPaint.PostProcessing
             
 
             Entry(cmd, srcRT, mainWorkRT);
+            //RunDebug(cmd, mainWorkRT, destRT);
+            
+
             RunSNoise(cmd, waterColor.SNoise1, snoiseRT1);
             RunSNoise(cmd, waterColor.SNoise2, snoiseRT2);
             RunBilateralFilter(cmd, mainWorkRT, workRTs[6]); //shader.GetRT(shader.RT_WORK0)
-            Swap(ref mainWorkRT, ref workRTs[6]);
+            //Swap(ref mainWorkRT, ref workRTs[6]);
 
             //RunDebug(cmd, snoiseRT1, destRT);
             //RunDebug(cmd, sobelRT, destRT);
@@ -184,7 +187,7 @@ namespace CinemaPaint.PostProcessing
             //RunDebug(cmd, workRTs[6], destRT);
             //RunDebug(cmd, mainWorkRT, destRT);
 
-            this.RenderWaterColor(cmd, mainWorkRT, destRT);
+            this.RenderWaterColor(cmd, workRTs[6], destRT);
             //this.RenderHandTremor(workRTs[6], mainWorkRT);
             //Swap(this.tempRT4, tempRT0);
             //RunDebug(cmd, workRTs[4], destRT); //Only thmor
@@ -203,22 +206,24 @@ namespace CinemaPaint.PostProcessing
             //
             //this._material.SetTexture(ShaderIDs.InputTexture, srcRT);
             //this._material.SetTexture("_RT_MASK", srcRT);
-            //this._material.SetFloat("_CCInBlack", InsCC.InputBlack);
-            //this._material.SetFloat("_CCInGamma", InsCC.InputGamma);
-            //this._material.SetFloat("_CCInWhite", InsCC.InputWhite);
-            //this._material.SetFloat("_CCOutBlack", InsCC.OutputBlack);
-            //this._material.SetFloat("_CCOutWhite", InsCC.OutputWhite);
-            //this._material.SetFloat("_CCMulLum", InsCC.MulLum);
-            //this._material.SetFloat("_CCAddLum", InsCC.AddLum);
+            this._material.SetFloat("_CCInBlack", InsCC.InputBlack);
+            this._material.SetFloat("_CCInGamma", InsCC.InputGamma);
+            this._material.SetFloat("_CCInWhite", InsCC.InputWhite);
+            this._material.SetFloat("_CCOutBlack", InsCC.OutputBlack);
+            this._material.SetFloat("_CCOutWhite", InsCC.OutputWhite);
+            this._material.SetFloat("_CCMulLum", InsCC.MulLum);
+            this._material.SetFloat("_CCAddLum", InsCC.AddLum);
             
+            /*
             for(int i = 0; i < workRTs.Length; i++)
             {
                 this._material.SetTexture("_RT_WORK" + i, this.workRTs[i]);
             }
+            */
             
             // Entry: Color modification
             this._material.SetTexture(ShaderIDs.InputTextureX, srcRT); //最初はMaterialで, そのあとはpropで
-            HDUtils.DrawFullScreen(cmd, this._material, mainWorkRT, null, this.entryPass);
+            HDUtils.DrawFullScreen(cmd, this._material, destRT, null, this.entryPass);
 
             // Generate Mask
             HDUtils.DrawFullScreen(cmd, this._material, maskRT, this._prop, this.maskCameraDepthTexturePass);

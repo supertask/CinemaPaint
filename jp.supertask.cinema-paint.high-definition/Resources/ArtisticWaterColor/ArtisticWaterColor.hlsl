@@ -40,9 +40,9 @@ float4 addHandTremor(float2 uv, float index, float4 color)
 	offset *= _WCRHandTremorLen * UV_SIZE;
 
 	// 近傍画素がマスク領域なら歪ませない
-	float mask = smplMask(uv + offset);
+	//float mask = smplMask(uv + offset); //TODO(Tasuku): ランタイムで動かなかったのはこれのせいらしい
 	// retではなく注目画素を返す（retは真白の場合があるため）
-	if (mask == 1.0) { return smpl(uv); }
+	//if (mask == 1.0) { return smpl(uv); }
 
 	float4 colorNeighbor = smpl(uv + offset);
 	float3 hsvNeighbor = rgb2hsv(colorNeighbor.rgb);
@@ -85,6 +85,8 @@ float4 addTurbulenceFow(float2 uv, float4 color)
 float4 FragmentHandTremor(Varyings input) : SV_Target
 {
 	UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
+	//return float4(input.uv, 0, 1);
+	//return smplSNoise(input.uv);
 	
 	// 注目画素の色ではなく真白から塗り重ねる
 	float4 ret = 1.0;
@@ -207,8 +209,8 @@ float4 addWetInWet(float2 uv, float2 stepLen, float2 stepDir, float4 color,
 		float2 uvNeighbor = uv + offset;
 
 		// 近傍画素がマスク領域なら滲ませない
-		float mask = smplMask(uvNeighbor);
-		if (mask == 1.0) { return color; }
+		//float mask = smplMask(uvNeighbor);
+		//if (mask == 1.0) { return color; }
 
 		float hueDist = 0.0, isDark = 0.0;
 		hueDistanceWCR(uvNeighbor, color, hueDist, isDark);

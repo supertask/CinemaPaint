@@ -352,39 +352,26 @@ float _CCMulLum, _CCAddLum;
 float _CCInBlack, _CCInGamma, _CCInWhite;
 float _CCOutBlack, _CCOutWhite;
 
-//output2 fragEntry(Varyings i) : SV_Target
 float4 fragEntry(Varyings i) : SV_Target
 {
 	float4 color = smplX(i.uv);
-	//float4 mask = smpl(_RT_MASK, i.uv);
 
-	/*
-	//エラーーーーー
 	// マスク領域は色補正を反映しない
-	if(mask.x < 0.5)
-	{
-		// ガンマ補正
-		static const float inv255 = 1.0 / 255.0;
-		float4 input = (max(0.0, (color * 255.0) - _CCInBlack)) / (_CCInWhite - _CCInBlack);
-		float4 gamma = pow(input, _CCInGamma);
-		color = (gamma * (_CCOutWhite - _CCOutBlack) + _CCOutBlack) * inv255;
+	//if(mask.x < 0.5)
+	//{
+	//	// ガンマ補正
+	//	static const float inv255 = 1.0 / 255.0;
+	//	float4 input = (max(0.0, (color * 255.0) - _CCInBlack)) / (_CCInWhite - _CCInBlack);
+	//	float4 gamma = pow(input, _CCInGamma);
+	//	color = (gamma * (_CCOutWhite - _CCOutBlack) + _CCOutBlack) * inv255;
 
-		// コントラストと輝度の補整
-		float3 lab = rgb2lab(color.rgb);
-		lab.x = lab.x * _CCMulLum + _CCAddLum;
-		color.rgb = saturate(lab2rgb(lab));
-	}
-	*/
+	//	// コントラストと輝度の補整
+	//	float3 lab = rgb2lab(color.rgb);
+	//	lab.x = lab.x * _CCMulLum + _CCAddLum;
+	//	color.rgb = saturate(lab2rgb(lab));
+	//}
 	
-	//debug
-	//color = 1 - color;
-
-	//output2 o;
-	//o.rt[0] = color;
-	//o.rt[1] = color; // _RT_WORK1は元画像用に予約
-	//return o;
 	return color;
-	//return 1;
 }
 
 

@@ -22,10 +22,10 @@ namespace CinemaPaint.PostProcessing
         {
             [SerializeField, Range(0.0f, 255.0f)] public static float InputBlack = 0.0f;
             [SerializeField, Range(0.0f, 2.0f)] public static float InputGamma = 1.0f;
-            [SerializeField, Range(0.0f, 255.0f)] public static float InputWhite = 255.0f;
+            [SerializeField, Range(0.0f, 255.0f)] public static float InputWhite = 1.0f;
             [SerializeField, Range(0.0f, 255.0f)] public static float OutputBlack = 0.0f;
-            [SerializeField, Range(0.0f, 255.0f)] public static float OutputWhite = 255.0f;
-            [SerializeField, Range(0.0f, 2.0f)] public static float MulLum = 1.0f;
+            [SerializeField, Range(0.0f, 255.0f)] public static float OutputWhite = 1.0f;
+            [SerializeField, Range(0.0f, 2.0f)] public static float MulLum = 1.2f;
             [SerializeField, Range(-1.0f, 1.0f)] public static float AddLum = 0.0f;
         }
 
